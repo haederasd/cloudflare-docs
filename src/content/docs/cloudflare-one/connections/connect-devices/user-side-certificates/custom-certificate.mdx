@@ -82,7 +82,7 @@ openssl x509 -in <CUSTOM-ROOT-CERT>.pem -text
 	3. Deploy the certificate in Gateway using the certificate's UUID with the [Patch Zero Trust account configuration endpoint](/api/resources/zero_trust/subresources/gateway/subresources/configurations/methods/edit/).
     	```bash {10}
     	curl --request PATCH \
-    	"https://api.cloudflare.com/client/v4/accounts/{account_id}/gateway/configuration" \
+    	"https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/gateway/configuration" \
     	--header "X-Auth-Email: <EMAIL>" \
     	--header "X-Auth-Key: <API_KEY>" \
     	--header "Content-Type: application/json" \
@@ -125,7 +125,7 @@ openssl x509 -in <CUSTOM-ROOT-CERT>.pem -text
 	4. Activate the certificate for use in inspection with the [Activate a Zero Trust certificate endpoint](/api/resources/zero_trust/subresources/gateway/subresources/certificates/methods/activate/).
 			```bash
 			curl --request POST \
-			"https://api.cloudflare.com/client/v4/accounts/{account_id}/gateway/certificates/{certificate_id}/activate" \
+			"https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/gateway/certificates/{certificate_id}/activate" \
 			--header "X-Auth-Email: <EMAIL>" \
 			--header "X-Auth-Key: <API_KEY>"
 			```
