@@ -84,7 +84,8 @@ async function run(): Promise<void> {
 			.filter(
 				(file) =>
 					file.filename.endsWith(".mdx") &&
-					file.filename.startsWith("src/content/docs"),
+					(file.filename.startsWith("src/content/docs") ||
+						file.filename.startsWith("src/content/changelogs-next")),
 			)
 			.map((file) => ({
 				file,
@@ -96,6 +97,7 @@ async function run(): Promise<void> {
 				const filePathToUriPath = (link: string): string => {
 					let path = link
 						.replace(/^src\/content\/docs/, "")
+						.replace(/^src\/content\/changelogs-next/, "")
 						.replace(/index\.mdx$/, "")
 						.replace(/\.mdx$/, "/");
 					return slugify(path);
