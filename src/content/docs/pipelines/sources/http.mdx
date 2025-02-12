@@ -59,3 +59,21 @@ curl https://<PIPELINE-ID>.pipelines.cloudflare.com
   		{"key1": "value3", "key2": "value4"}
 			]'
 ```
+
+## Specifying CORS Settings
+If you want to use your Pipeline to ingest client side data, such as website clicks, you'll need to configure your [Cross-Origin Resource Sharing (CORS) settings](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
+
+Without setting your CORS settings, browsers will restrict requests made to your Pipeline endpoint. For example, if your website domain is `https://my-website.com`, and you want to post client side data to your pipeline at `https://<PIPELINE-ID>.pipelines.cloudflare.com`, without CORS settings, the request will fail.
+
+To fix this, you need to configure your Pipeline to accept requests from `https://my-website.com`. You can do so while creating or updating a pipeline, using the flag `--cors-origins`. You can specify multiple domains separated by a comma and a space.
+
+```sh
+$ npx wrangler pipelines update [PIPELINE-NAME] --cors-origins "https://mydomain.com", "http://localhost:8787"
+```
+
+You can specify that all cross origin requests are accepted. We recommend only using this option for testing Pipelines, and not for production use cases.
+```sh
+$ npx wrangler pipelines update [PIPELINE-NAME] --cors-origins "*"
+```
+
+After your the `--cors-origins` have been set on your Pipeline, your Pipeline will respond to preflight requests and POST requests with the appropriate `Access-Control-Allow-Origin` headers set.
