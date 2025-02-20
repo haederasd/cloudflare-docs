@@ -4,7 +4,7 @@ import { Card } from "@astrojs/starlight/components";
 const configuration = Object.entries({
 	available_ports_per_host: {
 		title: "Available ports per host",
-		default: 50000,
+		default: 50_000,
 	},
 	cloudflared_replicas: {
 		title: "Number of cloudflared replicas",
@@ -25,7 +25,7 @@ const configuration = Object.entries({
 const metrics = Object.entries({
 	tcp_per_sec: {
 		title: "TCP requests per second",
-		default: 50000,
+		default: 50_000,
 	},
 	non_dns_udp_req_per_sec: {
 		title: "Non-DNS UDP requests per second",
@@ -200,7 +200,6 @@ const metrics = Object.entries({
 		}
 	}
 
-	document
-		.querySelectorAll("input[data-tunnel-calculator]")
-		.forEach((input) => input.addEventListener("change", calculate));
+	for (const input of document
+	.querySelectorAll("input[data-tunnel-calculator]")) input.addEventListener("change", calculate);
 </script>

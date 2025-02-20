@@ -24,7 +24,7 @@ if (!code) {
 	);
 }
 
-code = code.replace(/\u007f/g, "\n");
+code = code.replaceAll('', "\n");
 
 const language =
 	html.querySelector("[data-language]")?.attributes["data-language"];

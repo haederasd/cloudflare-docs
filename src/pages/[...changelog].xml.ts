@@ -29,10 +29,11 @@ export async function getStaticPaths() {
 
 export const GET: APIRoute = async (context) => {
 	function walkTokens(token: Token) {
-		if (token.type === "image" || token.type === "link") {
-			if (token.href.startsWith("/")) {
-				token.href = context.site + token.href.slice(1);
-			}
+		if (
+			(token.type === "image" || token.type === "link") &&
+			token.href.startsWith("/")
+		) {
+			token.href = context.site + token.href.slice(1);
 		}
 	}
 
@@ -94,12 +95,9 @@ export const GET: APIRoute = async (context) => {
 					link = product.data.link.concat(`#${anchor}`);
 				}
 
-				let title;
-				if (entry.scheduled) {
-					title = `Scheduled for ${entry.scheduled_date}`;
-				} else {
-					title = entry.title;
-				}
+				const title = entry.scheduled
+					? `Scheduled for ${entry.scheduled_date}`
+					: entry.title;
 
 				return {
 					product: product.data.productName,
@@ -113,7 +111,7 @@ export const GET: APIRoute = async (context) => {
 	);
 
 	const entries = mapped.sort((a, b) => {
-		return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
+		return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0);
 	});
 
 	const rssName =

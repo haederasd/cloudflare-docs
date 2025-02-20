@@ -43,37 +43,48 @@ const { name } = Astro.params;
 const { model } = Astro.props;
 
 let CodeExamples = null;
+
 switch (model.task.name) {
-	case "Text Generation":
+	case "Text Generation": {
 		CodeExamples = TextGenerationCode;
 		break;
-	case "Automatic Speech Recognition":
+	}
+	case "Automatic Speech Recognition": {
 		CodeExamples = AutomaticSpeechRecognitionCode;
 		break;
-	case "Image Classification":
+	}
+	case "Image Classification": {
 		CodeExamples = ImageClassificationCode;
 		break;
-	case "Object Detection":
+	}
+	case "Object Detection": {
 		CodeExamples = ObjectDetectionCode;
 		break;
-	case "Image-to-Text":
+	}
+	case "Image-to-Text": {
 		CodeExamples = ImageToTextCode;
 		break;
-	case "Text-to-Image":
+	}
+	case "Text-to-Image": {
 		CodeExamples = TextToImageCode;
 		break;
-	case "Translation":
+	}
+	case "Translation": {
 		CodeExamples = TranslationCode;
 		break;
-	case "Summarization":
+	}
+	case "Summarization": {
 		CodeExamples = SummarizationCode;
 		break;
-	case "Text Embedding":
+	}
+	case "Text Embedding": {
 		CodeExamples = TextEmbeddingCode;
 		break;
-	case "Text Classification":
+	}
+	case "Text Classification": {
 		CodeExamples = TextClassificationCode;
 		break;
+	}
 }
 
 // Overrides
@@ -119,7 +130,7 @@ const starlightPageProps = {
 		{ depth: 3, slug: "Input", text: "Input" },
 		{ depth: 3, slug: "Output", text: "Output" },
 		{ depth: 2, slug: "API Schemas", text: "API Schemas" },
-	].filter((v) => Boolean(v)) as MarkdownHeading[],
+	].filter(Boolean) as MarkdownHeading[],
 	hideTitle: true,
 } as StarlightPageProps;
 ---
@@ -135,7 +146,7 @@ const starlightPageProps = {
 				/>
 			) : (
 				<div class="mr-4 flex size-12 items-center justify-center rounded-md bg-gray-100 text-2xl font-black uppercase text-gray-400">
-					{model.name.split("/")[1].substring(0, 1)}
+					{model.name.split("/")[1].slice(0, 1)}
 				</div>
 			)
 		}

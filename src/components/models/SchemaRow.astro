@@ -13,9 +13,9 @@ const { node, root } = Astro.props;
 			<span class="mr-2 font-bold">{node.title}</span>
 		) : (
 			<code class="mr-2 rounded-md bg-gray-100 !pr-0 font-mono">
-				{node.subpath[node.subpath.length - 1]}
+				{node.subpath.at(-1)}
 				{node.parent.fragment?.required?.includes(
-					node.subpath[node.subpath.length - 1],
+					node.subpath.at(-1),
 				) ? (
 					<span class="font-semibold text-red-500">*</span>
 				) : (

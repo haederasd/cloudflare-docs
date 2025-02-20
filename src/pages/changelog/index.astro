@@ -83,7 +83,7 @@ const props = {
 		const value = filter.value;
 
 		if (value === "all") {
-			entries.forEach((entry) => (entry.style.display = ""));
+			for (const entry of entries) (entry.style.display = "");
 
 			return;
 		}
@@ -95,11 +95,7 @@ const props = {
 
 			const show = products.includes(value);
 
-			if (show) {
-				entry.style.display = "";
-			} else {
-				entry.style.display = "none";
-			}
+			entry.style.display = show ? "" : "none";
 		}
 	});
 </script>

@@ -35,7 +35,7 @@ export const baseSchema = z.object({
 			z.literal("design-guide"),
 			z.literal("video"),
 		])
-		.catch((ctx) => ctx.input)
+		.catch((error) => error.input)
 		.optional()
 		.describe(
 			"Refer to https://developers.cloudflare.com/style-guide/documentation-content-strategy/content-types/.",
@@ -54,7 +54,7 @@ export const baseSchema = z.object({
 			z.literal("Intermediate"),
 			z.literal("Advanced"),
 		])
-		.catch((ctx) => ctx.input)
+		.catch((error) => error.input)
 		.optional()
 		.describe(
 			"Difficulty is displayed as a column in the ListTutorials component.",

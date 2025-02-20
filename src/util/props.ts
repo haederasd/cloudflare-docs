@@ -71,7 +71,7 @@ export async function generateDescription({
 	html?: string;
 	markdown?: string;
 }) {
-	let description = undefined;
+	let description;
 
 	if (markdown) {
 		const file = await remark().use(strip).process(markdown);

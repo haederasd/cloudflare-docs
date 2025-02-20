@@ -50,17 +50,13 @@ const LearningPathCatalog = ({
 
 	// apply filters to the fields list
 	const filtered = mapped.filter((path) => {
-		if (filters.groups.length > 0) {
-			if (!path.groups.some((c) => filters.groups.includes(c))) {
+		if (filters.groups.length > 0 && !path.groups.some((c) => filters.groups.includes(c))) {
 				return false;
 			}
-		}
 
-		if (filters.products.length > 0) {
-			if (!path.products.some((c) => filters.products.includes(c))) {
+		if (filters.products.length > 0 && !path.products.some((c) => filters.products.includes(c))) {
 				return false;
 			}
-		}
 
 		return true;
 	});

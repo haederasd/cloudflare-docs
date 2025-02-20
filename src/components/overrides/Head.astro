@@ -20,7 +20,14 @@ if (currentSection) {
 
 			let title: string;
 
-			if (titleIdx !== -1) {
+			if (titleIdx === -1) {
+				title = `${Astro.props.entry.data.title} · ${product.data.meta.title}`;
+				Astro.props.entry.data.head.push({
+					tag: "title",
+					attrs: {},
+					content: title,
+				});
+			} else {
 				const existingTitle = Astro.props.entry.data.head[titleIdx].content;
 				title = `${existingTitle} · ${product.data.meta.title}`;
 
@@ -29,13 +36,6 @@ if (currentSection) {
 					attrs: {},
 					content: title,
 				};
-			} else {
-				title = `${Astro.props.entry.data.title} · ${product.data.meta.title}`;
-				Astro.props.entry.data.head.push({
-					tag: "title",
-					attrs: {},
-					content: title,
-				});
 			}
 
 			Astro.props.entry.data.head.push({
@@ -47,22 +47,24 @@ if (currentSection) {
 
 		if (product.data.product.title) {
 			const productName = product.data.product.title;
-			Astro.props.entry.data.head.push({
-				tag: "meta",
-				attrs: {
-					name: "pcx_product",
-					content: productName,
+			Astro.props.entry.data.head.push(
+				{
+					tag: "meta",
+					attrs: {
+						name: "pcx_product",
+						content: productName,
+					},
+					content: "",
 				},
-				content: "",
-			});
-			Astro.props.entry.data.head.push({
-				tag: "meta",
-				attrs: {
-					name: "algolia_product_filter",
-					content: productName,
+				{
+					tag: "meta",
+					attrs: {
+						name: "algolia_product_filter",
+						content: productName,
+					},
+					content: "",
 				},
-				content: "",
-			});
+			);
 		}
 
 		if (product.data.product.group) {
@@ -115,9 +117,7 @@ if (currentSection) {
 				},
 			] as const;
 
-			Astro.props.entry.data.head.push(...tags);
-
-			Astro.props.entry.data.head.push({
+			Astro.props.entry.data.head.push(...tags, {
 				tag: "meta",
 				attrs: {
 					name: "pcx_content_group",
@@ -191,22 +191,24 @@ if (Astro.props.entry.data.noindex) {
 // content type
 if (Astro.props.entry.data.pcx_content_type) {
 	const contentType = Astro.props.entry.data.pcx_content_type;
-	Astro.props.entry.data.head.push({
-		tag: "meta",
-		attrs: {
-			name: "pcx_content_type",
-			content: contentType,
+	Astro.props.entry.data.head.push(
+		{
+			tag: "meta",
+			attrs: {
+				name: "pcx_content_type",
+				content: contentType,
+			},
+			content: "",
 		},
-		content: "",
-	});
-	Astro.props.entry.data.head.push({
-		tag: "meta",
-		attrs: {
-			name: "algolia_content_type",
-			content: contentType,
+		{
+			tag: "meta",
+			attrs: {
+				name: "algolia_content_type",
+				content: contentType,
+			},
+			content: "",
 		},
-		content: "",
-	});
+	);
 }
 
 // other products
@@ -268,22 +270,24 @@ if (Astro.props.entry.data.pcx_content_type === "changelog") {
 }
 
 if (Astro.props.entry.data.external_link) {
-	Astro.props.entry.data.head.push({
-		tag: "meta",
-		attrs: {
-			content: "noindex",
-			name: "robots",
+	Astro.props.entry.data.head.push(
+		{
+			tag: "meta",
+			attrs: {
+				content: "noindex",
+				name: "robots",
+			},
+			content: "",
 		},
-		content: "",
-	});
-	Astro.props.entry.data.head.push({
-		tag: "meta",
-		attrs: {
-			content: `0; url=${Astro.props.entry.data.external_link}`,
-			"http-equiv": "refresh",
+		{
+			tag: "meta",
+			attrs: {
+				content: `0; url=${Astro.props.entry.data.external_link}`,
+				"http-equiv": "refresh",
+			},
+			content: "",
 		},
-		content: "",
-	});
+	);
 }
 ---
 

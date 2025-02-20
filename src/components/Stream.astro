@@ -22,7 +22,9 @@ url.searchParams.set("letterboxColor", "transparent");
 
 // full url option
 if (thumbnailTimeOrURL !== undefined) {
-	if (!thumbnailTimeOrURL.startsWith("http")) {
+	if (thumbnailTimeOrURL.startsWith("http")) {
+		url.searchParams.set("poster", thumbnailTimeOrURL);
+	} else {
 		const thumbnailUrl = new URL(
 			`${videoId}/thumbnails/thumbnail.jpg`,
 			baseUrl,
@@ -31,8 +33,6 @@ if (thumbnailTimeOrURL !== undefined) {
 		thumbnailUrl.searchParams.set("time", thumbnailTimeOrURL);
 
 		url.searchParams.set("poster", encodeURI(thumbnailUrl.toString()));
-	} else {
-		url.searchParams.set("poster", thumbnailTimeOrURL);
 	}
 }
 ---

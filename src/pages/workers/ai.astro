@@ -264,9 +264,9 @@ import CursorLight from "~/assets/images/workers/ai/cursor-light.png";
 	import { marked } from "marked";
 	import DOMPurify from "dompurify";
 
-	const formEl = document.getElementById("ai-form") as HTMLFormElement;
-	const promptEl = document.getElementById("prompt") as HTMLInputElement;
-	const messagesEl = document.getElementById("messages") as HTMLUListElement;
+	const formEl = document.querySelector("#ai-form") as HTMLFormElement;
+	const promptEl = document.querySelector("#prompt") as HTMLInputElement;
+	const messagesEl = document.querySelector("#messages") as HTMLUListElement;
 
 	const sourceToUrl = (mdFilename: string) =>
 		`https://developers.cloudflare.com/${mdFilename
@@ -287,7 +287,7 @@ import CursorLight from "~/assets/images/workers/ai/cursor-light.png";
 		messageEl.setAttribute("class", "prompt");
 		messageEl.innerText = prompt;
 
-		messagesEl.appendChild(messageEl);
+		messagesEl.append(messageEl);
 
 		const url = new URL("https://bot-api.developers.cloudflare.com/stream");
 		url.searchParams.set("question", prompt);
@@ -300,18 +300,18 @@ import CursorLight from "~/assets/images/workers/ai/cursor-light.png";
 		responseEl.setAttribute("class", "response");
 
 		const responseTextEl = document.createElement("p");
-		responseEl.appendChild(responseTextEl);
+		responseEl.append(responseTextEl);
 
 		const sourcesEl = document.createElement("p");
 		sourcesEl.style.display = "none";
-		responseEl.appendChild(sourcesEl);
+		responseEl.append(sourcesEl);
 
 		const loadingEl = document.createElement("div");
 		loadingEl.setAttribute("class", "loader");
 		loadingEl.innerHTML = '<div class="dot-flashing"></div>';
-		responseEl.appendChild(loadingEl);
+		responseEl.append(loadingEl);
 
-		messagesEl.appendChild(responseEl);
+		messagesEl.append(responseEl);
 
 		promptEl.setAttribute("disabled", "true");
 

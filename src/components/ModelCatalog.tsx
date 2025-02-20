@@ -34,7 +34,7 @@ const ModelCatalog = ({ models }: { models: WorkersAIModelsSchema[] }) => {
 
 					return [];
 				})
-				.filter((p) => Boolean(p)),
+				.filter(Boolean),
 		},
 		model_display_name: model.name.split("/").at(-1),
 	}));
@@ -44,7 +44,7 @@ const ModelCatalog = ({ models }: { models: WorkersAIModelsSchema[] }) => {
 	const capabilities = [
 		...new Set(
 			models
-				.map((model) =>
+				.flatMap((model) =>
 					model.properties
 						.flatMap(({ property_id, value }) => {
 							if (property_id === "lora" && value === "true") {
@@ -55,36 +55,27 @@ const ModelCatalog = ({ models }: { models: WorkersAIModelsSchema[] }) => {
 								return "Function calling";
 							}
 						})
-						.filter((p) => Boolean(p)),
-				)
-				.flat(),
+						.filter(Boolean),
+				),
 		),
 	];
 
 	const modelList = mapped.filter(({ model }) => {
-		if (filters.authors.length > 0) {
-			if (!filters.authors.includes(model.name.split("/")[1])) {
+		if (filters.authors.length > 0 && !filters.authors.includes(model.name.split("/")[1])) {
 				return false;
 			}
-		}
 
-		if (filters.tasks.length > 0) {
-			if (!filters.tasks.includes(model.task.name)) {
+		if (filters.tasks.length > 0 && !filters.tasks.includes(model.task.name)) {
 				return false;
 			}
-		}
 
-		if (filters.capabilities.length > 0) {
-			if (!model.capabilities.some((c) => filters.capabilities.includes(c))) {
+		if (filters.capabilities.length > 0 && !model.capabilities.some((c) => filters.capabilities.includes(c))) {
 				return false;
 			}
-		}
 
-		if (filters.search) {
-			if (!model.name.toLowerCase().includes(filters.search.toLowerCase())) {
+		if (filters.search && !model.name.toLowerCase().includes(filters.search.toLowerCase())) {
 				return false;
 			}
-		}
 
 		return true;
 	});

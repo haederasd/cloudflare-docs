@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import YAML from "yaml";
 import { marked } from "marked";
 
@@ -15,19 +15,19 @@ for (const track of tracks) {
 	fetch(`https://downloads.cloudflareclient.com/v1/update/json/${track}`)
 		.then((res) => res.json())
 		.then((data) => {
-			data.items.forEach((item) => {
+			for (const item of data.items) {
 				const path = `./src/content/warp-releases/${track}/${item.version}.yaml`;
 
 				if (fs.existsSync(path)) {
 					console.log(`${track} ${item.version} already exists.`);
-					return;
+					continue;
 				}
 
 				console.log(`Saving ${track} ${item.version}.`);
 
 				let markdown = item.releaseNotes;
 
-				markdown.replace(/\r\n/g, "\n");
+				markdown.replaceAll('\r\n', "\n");
 
 				for (const line of linesToRemove) {
 					markdown = markdown.replace(line, "");
@@ -57,6 +57,6 @@ for (const track of tracks) {
 					}),
 					"utf-8",
 				);
-			});
+			}
 		});
 }

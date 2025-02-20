@@ -17,8 +17,18 @@ export default [
 			},
 		},
 	},
-	pluginUnicorn.configs.recommended,
+	pluginJavaScript.configs.recommended,
+	...pluginTypeScript.configs.recommended,
+	...pluginAstro.configs.recommended,
+	...pluginAstro.configs["jsx-a11y-recommended"],
+	{
+		files: ["**/*.{jsx,mjsx,tsx,mtsx}"],
+		...pluginReact.configs.flat.recommended,
+		...pluginReactA11y.flatConfigs.recommended,
+		...pluginReact.configs.flat["jsx-runtime"],
+	},
 	...pluginTailwind.configs["flat/recommended"],
+	pluginUnicorn.configs.recommended,
 	{
 		settings: {
 			tailwindcss: {
@@ -37,16 +47,6 @@ export default [
 			},
 		},
 	},
-	pluginJavaScript.configs.recommended,
-	...pluginTypeScript.configs.recommended,
-	...pluginAstro.configs.recommended,
-	...pluginAstro.configs["jsx-a11y-recommended"],
-	{
-		files: ["**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}"],
-		...pluginReact.configs.flat.recommended,
-		...pluginReactA11y.flatConfigs.recommended,
-		...pluginReact.configs.flat["jsx-runtime"],
-	},
 	{
 		ignores: [".astro/", ".wrangler/", "dist/", ".github/"],
 	},
@@ -54,6 +54,22 @@ export default [
 		rules: {
 			"no-var": "error",
 			"unicorn/prevent-abbreviations": "off",
+			"unicorn/filename-case": "off",
+			"unicorn/text-encoding-identifier-case": "off",
+			"unicorn/no-anonymous-default-export": "off",
+			"unicorn/prefer-global-this": "off",
+			"unicorn/explicit-length-check": "off",
+			"unicorn/no-null": "off",
+			"unicorn/prefer-spread": "off",
+			"unicorn/no-process-exit": "off",
+			"unicorn/prefer-top-level-await": "off",
+			"unicorn/prefer-dom-node-text-content": "off",
+			"unicorn/prefer-add-event-listener": "off",
+			"unicorn/template-indent": "off",
+			"unicorn/consistent-function-scoping": [
+				"error",
+				{ checkArrowFunctions: false },
+			],
 			"@typescript-eslint/no-explicit-any": "off",
 			"@typescript-eslint/no-unused-vars": [
 				"error",

@@ -18,11 +18,9 @@ const currentSection = Astro.params.slug?.split("/")[0];
 if (currentSection) {
 	const product = await getEntry("products", currentSection);
 
-	if (product) {
-		if (product.data.resources?.dashboard_link) {
+	if (product && product.data.resources?.dashboard_link) {
 			links["Cloudflare Dashboard"] = product.data.resources.dashboard_link;
 		}
-	}
 }
 
 const homepageLinks = Object.entries({

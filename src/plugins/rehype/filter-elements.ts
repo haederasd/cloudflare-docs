@@ -15,7 +15,7 @@ const unwrap = (
 	return [SKIP, index];
 };
 
-const ALLOWED_ELEMENTS = [
+const ALLOWED_ELEMENTS = new Set([
 	// Content sectioning
 	"address",
 	"article",
@@ -92,7 +92,7 @@ const ALLOWED_ELEMENTS = [
 	"tr",
 	// Custom elements
 	"rule-id",
-];
+]);
 
 const ALLOWED_ATTRIBUTES: Record<string, string[]> = {
 	a: ["href", "id", "target"],
@@ -110,7 +110,7 @@ export default function () {
 				const tag = element.tagName;
 				const classNames = (element.properties.className as string[]) ?? [];
 
-				if (!ALLOWED_ELEMENTS.includes(tag)) {
+				if (!ALLOWED_ELEMENTS.has(tag)) {
 					return remove(index, parent);
 				}
 

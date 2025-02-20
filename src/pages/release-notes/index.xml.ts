@@ -8,10 +8,11 @@ import { entryToString } from "~/util/container";
 
 export const GET: APIRoute = async (context) => {
 	function walkTokens(token: Token) {
-		if (token.type === "image" || token.type === "link") {
-			if (token.href.startsWith("/")) {
-				token.href = context.site + token.href.slice(1);
-			}
+		if (
+			(token.type === "image" || token.type === "link") &&
+			token.href.startsWith("/")
+		) {
+			token.href = context.site + token.href.slice(1);
 		}
 	}
 
@@ -56,12 +57,9 @@ export const GET: APIRoute = async (context) => {
 					link = product.data.link.concat(`#${anchor}`);
 				}
 
-				let title;
-				if (entry.scheduled) {
-					title = `Scheduled for ${entry.scheduled_date}`;
-				} else {
-					title = entry.title;
-				}
+				const title = entry.scheduled
+					? `Scheduled for ${entry.scheduled_date}`
+					: entry.title;
 
 				return {
 					product: product.data.productName,

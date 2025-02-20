@@ -47,7 +47,7 @@ tutorials.push(...videos);
 tutorials.sort((a, b) => Number(b.data.updated) - Number(a.data.updated));
 
 const timeAgo = (date?: Date) => {
-	if (!date) return undefined;
+	if (!date) return;
 	return formatDistance(date, new Date(), { addSuffix: true });
 };
 ---

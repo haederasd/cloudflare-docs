@@ -8,32 +8,32 @@ import starlightLinksValidator from "starlight-links-validator";
 import icon from "astro-icon";
 import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
-import { readdir } from "fs/promises";
+
+import { readdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 
 import rehypeTitleFigure from "rehype-title-figure";
 import rehypeMermaid from "./src/plugins/rehype/mermaid.ts";
 import rehypeAutolinkHeadings from "./src/plugins/rehype/autolink-headings.ts";
 import rehypeExternalLinks from "./src/plugins/rehype/external-links.ts";
 import rehypeHeadingSlugs from "./src/plugins/rehype/heading-slugs.ts";
-import { fileURLToPath } from "url";
 
 async function autogenSections() {
-	const sections = (
-		await readdir("./src/content/docs/", {
-			withFileTypes: true,
-		})
-	)
-		.filter((x) => x.isDirectory())
-		.map((x) => x.name);
-	return sections.map((x) => {
-		return {
-			label: x,
-			autogenerate: {
-				directory: x,
-				collapsed: true,
-			},
-		};
+	const entities = await readdir("./src/content/docs/", {
+		withFileTypes: true,
 	});
+
+	return entities
+		.filter((x) => x.isDirectory())
+		.map((x) => {
+			return {
+				label: x,
+				autogenerate: {
+					directory: x,
+					collapsed: true,
+				},
+			};
+		});
 }
 
 const sidebar = await autogenSections();
@@ -166,10 +166,10 @@ export default defineConfig({
 		resolve: {
 			alias: {
 				"./Page.astro": fileURLToPath(
-					new URL("./src/components/overrides/Page.astro", import.meta.url),
+					new URL("src/components/overrides/Page.astro", import.meta.url),
 				),
 				"../components/Page.astro": fileURLToPath(
-					new URL("./src/components/overrides/Page.astro", import.meta.url),
+					new URL("src/components/overrides/Page.astro", import.meta.url),
 				),
 			},
 		},

@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { optimize } from "svgo";
 import glob from "fast-glob";
 import { formatBytes } from "../src/util/helpers";
@@ -50,8 +50,8 @@ async function run() {
 			);
 			optimizedSize += result.data.length;
 			await writeFile(filePath, result.data);
-		} catch (err) {
-			console.error(`Error optimizing ${filePath}: ${err}`);
+		} catch (error) {
+			console.error(`Error optimizing ${filePath}: ${error}`);
 		} finally {
 			processed++;
 		}

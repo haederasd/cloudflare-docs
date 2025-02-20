@@ -9,13 +9,13 @@ export const filenameToPath = (filename: string) => {
 		.split("/")
 		.filter(Boolean);
 
-	const changelogIdx = segments.findIndex((s) => s === "changelog");
+	const changelogIdx = segments.indexOf("changelog");
 
 	if (changelogIdx !== -1) {
 		segments.splice(changelogIdx + 1, 1);
 	}
 
-	return segments
+	return [...segments
 		.flatMap((segment) => {
 			if (segment === "docs") {
 				return [];
@@ -30,8 +30,7 @@ export const filenameToPath = (filename: string) => {
 			return slugified;
 		})
 		.join("/")
-		.replace(/\/index$/, "")
-		.concat("/");
+		.replace(/\/index$/, ""), "/"];
 };
 
 export const branchToSubdomain = (branch: string) => {

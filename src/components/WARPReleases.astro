@@ -41,7 +41,7 @@ releases.sort(sortByDate);
 const latestRelease = releases.at(0);
 
 if (!latestRelease) {
-	throw new Error();
+	throw new Error(`[WARPReleases] Unable to find any releases`);
 }
 
 const platform = latestRelease.platformName;

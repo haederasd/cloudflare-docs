@@ -7,13 +7,11 @@ export default function () {
 			if (element.tagName === "a") {
 				const href = element.properties.href as string | undefined;
 
-				if (href) {
-					if (href.startsWith("/")) {
+				if (href && href.startsWith("/")) {
 						const url = new URL(href, "https://developers.cloudflare.com/");
 
 						element.properties.href = url.href;
 					}
-				}
 			}
 		});
 	};

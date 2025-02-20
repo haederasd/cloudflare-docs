@@ -1,4 +1,4 @@
-import { readFile } from "fs/promises";
+import { readFile } from "node:fs/promises";
 
 async function main() {
 	const redirects = await readFile("public/_redirects", { encoding: "utf-8" });

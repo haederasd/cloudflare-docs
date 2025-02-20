@@ -57,7 +57,7 @@ if (!code) {
 	);
 }
 
-code = code.replace(/\u007f/g, "\n");
+code = code.replaceAll('', "\n");
 
 const js = await format(tsBlankSpace(code), { parser: "babel", useTabs: true });
 

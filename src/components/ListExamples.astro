@@ -19,11 +19,7 @@ const { directory, filters, additionalProducts } = props.parse(Astro.props);
 
 let target = Astro.params.slug?.split("/")[0];
 
-if (directory) {
-	target = directory;
-} else {
-	target = target?.concat("/");
-}
+target = directory ?? target?.concat("/");
 
 const examples = await getCollection("docs", (entry) => {
 	return (

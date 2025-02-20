@@ -19,7 +19,7 @@ describe("description", () => {
 				markdown: `[links${icon}](/) and **${icon}stuff**`,
 			});
 
-			expect(desc).toEqual("links and \\*\\*stuff\\*\\*");
+			expect(desc).toEqual(String.raw`links and \*\*stuff\*\*`);
 		});
 	});
 

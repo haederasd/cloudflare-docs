@@ -18,25 +18,21 @@ const ProductCatalog = ({ products }: { products: ProductData[] }) => {
 		groups: [],
 	});
 
-	const groups = [...new Set(products.map((product) => product.groups).flat())];
+	const groups = [...new Set(products.flatMap((product) => product.groups))];
 
 	const productList = products.filter((product) => {
-		if (filters.groups.length > 0) {
-			if (
+		if (filters.groups.length > 0 && 
 				filters.groups.filter((val) => product.groups.includes(val)).length ===
 				0
 			) {
 				return false;
 			}
-		}
 
-		if (filters.search) {
-			if (
+		if (filters.search && 
 				!product.data.name.toLowerCase().includes(filters.search.toLowerCase())
 			) {
 				return false;
 			}
-		}
 
 		return true;
 	});
@@ -129,7 +125,7 @@ const ProductCatalog = ({ products }: { products: ProductData[] }) => {
 								)}
 								{!product.icon && (
 									<div className="mr-2 flex size-8 items-center justify-center rounded-full bg-orange-50 p-1 text-lg font-bold leading-none text-[color:var(--orange-accent-200)] dark:bg-orange-950">
-										{product.data.name.substr(0, 1)}
+										{product.data.name.slice(0, 1)}
 									</div>
 								)}
 								<span className="mt-0.5 font-semibold">

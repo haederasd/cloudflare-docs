@@ -44,13 +44,11 @@ export async function getSidebar(context: AstroGlobal<Props>) {
 
 	if (!memoized) {
 		let group = context.props.sidebar
-			.filter((entry) => entry.type === "group" && entry.label === product)
-			.at(0) as Group;
+			.find((entry) => entry.type === "group" && entry.label === product) as Group;
 
 		if (module) {
 			group = group.entries
-				.filter((entry) => entry.type === "group" && entry.label === module)
-				.at(0) as Group;
+				.find((entry) => entry.type === "group" && entry.label === module) as Group;
 		}
 
 		if (!group) {
@@ -74,11 +72,7 @@ export async function getSidebar(context: AstroGlobal<Props>) {
 export async function generateSidebar(group: Group) {
 	group.entries = await Promise.all(
 		group.entries.map((entry) => {
-			if (entry.type === "group") {
-				return handleGroup(entry);
-			} else {
-				return handleLink(entry);
-			}
+			return entry.type === "group" ? handleGroup(entry) : handleLink(entry);
 		}),
 	);
 
@@ -109,11 +103,10 @@ function setSidebarCurrentEntry(
 		}
 
 		const flattened = flattenSidebar(sidebar)
-			.filter(
+			.find(
 				(link) =>
 					link.attrs["data-hide-children"] && pathname.startsWith(link.href),
-			)
-			.at(0);
+			);
 
 		if (
 			flattened &&
@@ -182,11 +175,7 @@ async function handleGroup(group: Group): Promise<SidebarEntry> {
 	}
 
 	for (const entry of group.entries.keys()) {
-		if (group.entries[entry].type === "group") {
-			group.entries[entry] = await handleGroup(group.entries[entry] as Group);
-		} else {
-			group.entries[entry] = await handleLink(group.entries[entry] as Link);
-		}
+		group.entries[entry] = await (group.entries[entry].type === "group" ? handleGroup(group.entries[entry] as Group) : handleLink(group.entries[entry] as Link));
 	}
 
 	const idx = group.entries.indexOf(index);
@@ -253,7 +242,7 @@ async function handleLink(link: Link): Promise<Link> {
 }
 
 function inferBadgeVariant(badge: Badge) {
-	if (!badge) return undefined;
+	if (!badge) return;
 
 	if (badge.variant === "default") {
 		switch (badge.text) {

@@ -23,11 +23,7 @@ export async function getReleaseNotes(opts?: {
 		);
 	}
 
-	if (opts?.deprecationsOnly) {
-		releaseNotes = releaseNotes.filter((x) => x.id === "api-deprecations");
-	} else {
-		releaseNotes = releaseNotes.filter((x) => x.id !== "api-deprecations");
-	}
+	releaseNotes = opts?.deprecationsOnly ? releaseNotes.filter((x) => x.id === "api-deprecations") : releaseNotes.filter((x) => x.id !== "api-deprecations");
 
 	const products = [
 		...new Set(releaseNotes.flatMap((x) => x.data.productName)),
@@ -96,7 +92,7 @@ export async function getWranglerReleases(): Promise<
 			productAreaLink: "/workers/platform/changelog/platform/",
 			entries: releases.map((release) => {
 				return {
-					publish_date: release.published_at.toISOString().substring(0, 10),
+					publish_date: release.published_at.toISOString().slice(0, 10),
 					title: release.name.split("@")[1],
 					link: `https://github.com/cloudflare/workers-sdk/releases/tag/wrangler%40${release.name.split("@")[1]}`,
 					description: release.body,

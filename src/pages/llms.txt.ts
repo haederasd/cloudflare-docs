@@ -34,9 +34,9 @@ export const GET: APIRoute = async () => {
 		${grouped
 			.map(([product, entries]) => {
 				return dedent(`
-				## ${product}
+					## ${product}
 
-				${entries
+					${entries
 					?.map((e) => {
 						const line = `- [${e.data.title}](https://developers.cloudflare.com/${e.id}/)`;
 
@@ -49,7 +49,7 @@ export const GET: APIRoute = async () => {
 						return line;
 					})
 					.join("\n")}
-			`);
+				`);
 			})
 			.join("\n\n")}
 	`);

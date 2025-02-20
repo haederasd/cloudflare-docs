@@ -1,5 +1,5 @@
 ---
-let range = (n: number) => [...Array(n).keys()];
+let range = (n: number) => [...Array.from({ length: n }).keys()];
 ---
 
 {/* eslint-disable tailwindcss/no-custom-classname */}
