@@ -1,0 +1,117 @@
+---
+pcx_content_type: navigation
+title: JSON Mode
+hideChildren: true
+sidebar:
+  order: 5
+---
+
+import { Code } from "~/components";
+
+export const jsonModeSchema = `{
+  response_format: {
+    title: "JSON Mode",
+    type: "object",
+    properties: {
+      type: {
+        type: "string",
+        enum: ["json_object", "json_schema"],
+      },
+      json_schema: {},
+    }
+  }
+}`;
+
+export const jsonModeRequestExample = `{
+  "messages": [
+    {
+      "role": "system",
+      "content": "Extract data about a country."
+    },
+    {
+      "role": "user",
+      "content": "Tell me about India."
+    }
+  ],
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "capital": {
+          "type": "string"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "capital",
+        "languages"
+      ]
+    }
+  }
+}`;
+
+export const jsonModeResponseExample = `{
+  "response": {
+    "name": "India",
+    "capital": "New Delhi",
+    "languages": [
+      "Hindi",
+      "English",
+      "Bengali",
+      "Telugu",
+      "Marathi",
+      "Tamil",
+      "Gujarati",
+      "Urdu",
+      "Kannada",
+      "Odia",
+      "Malayalam",
+      "Punjabi",
+      "Sanskrit"
+    ]
+  }
+}`;
+
+When we want text-generation AI models to interact with databases, services, and external systems programmatically, typically when using tool calling or building AI agents, we must have structured response formats rather than natural language.
+
+Workers AI supports JSON mode, enabling applications to request a structured output response when interacting with AI models.
+
+Here's a request to `@cf/meta/llama-3.1-8b-instruct-fp8-fast` using JSON mode:
+
+<Code code={jsonModeRequestExample} lang="json" />
+
+And what the response from the model:
+
+<Code code={jsonModeResponseExample} lang="json" />
+
+As you can see, the model is complying with the JSON schema definition in the request and responding with a validated JSON object.
+
+JSON mode is compatible with OpenAI’s implementation; to enable add the `response_format` property to the request object following this schema:
+
+<Code code={jsonModeSchema} lang="json" />
+
+Where `json_schema` must be a valid [JSON Schema](https://json-schema.org/) declaration.
+
+This is the list of models that now support JSON mode:
+
+- [@cf/meta/llama-3.1-8b-instruct-fast](/workers-ai/models/llama-3.1-8b-instruct-fast/)
+- [@cf/meta/llama-3.1-70b-instruct](/workers-ai/models/llama-3.1-70b-instruct/)
+- [@cf/meta/llama-3.3-70b-instruct-fp8-fast](/workers-ai/models/llama-3.3-70b-instruct-fp8-fast/)
+- [@cf/deepseek-ai/deepseek-r1-distill-qwen-32b](/workers-ai/models/deepseek-r1-distill-qwen-32b/)
+- [@cf/meta/llama-3-8b-instruct](/workers-ai/models/llama-3-8b-instruct/)
+- [@cf/meta/llama-3.1-8b-instruct](/workers-ai/models/llama-3.1-8b-instruct/)
+- [@hf/nousresearch/hermes-2-pro-mistral-7b](/workers-ai/models/hermes-2-pro-mistral-7b/)
+
+We will continue extending this list to keep up with new, and requested models.
+
+Note that Workers AI can't guarantee that the model responds according to the requested JSON Schema. Depending on the complexity of the task and adequacy of the JSON Schema, the model may not be able to satisfy the request in extreme situations. If that's the case, then an error `JSON Mode couldn't be met` is returned and must be handled.
