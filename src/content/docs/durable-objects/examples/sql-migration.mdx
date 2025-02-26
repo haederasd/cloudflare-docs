@@ -1,0 +1,160 @@
+---
+type: example
+summary: Mange SQL migrations in a Durable Object.
+tags:
+  - Durable Objects
+pcx_content_type: example
+title: Handle SQL migrations
+sidebar:
+  order: 3
+description: Mange SQL migrations in a Durable Object.
+---
+
+import { TypeScriptExample, WranglerConfig } from "~/components";
+
+This example shows how to handle SQL migrations in a Durable Object. To use this example, make sure that the `id` of the migrations are sequential.
+
+<TypeScriptExample>
+
+```ts
+import { DurableObject } from "cloudflare:workers";
+
+type SQLMigration = {
+	id: number; // should be sequential
+	description: string; // description of the migration
+	sql: string; // SQL statement to run
+};
+
+// add your migrations here
+const migrations: SQLMigration[] = [
+	{
+		id: 1,
+		description: "Create 'users' table",
+		sql: `
+			CREATE TABLE users (
+				id INTEGER PRIMARY KEY,
+				name TEXT NOT NULL
+			);
+		`,
+	},
+	{
+		id: 2,
+		description: "Add age column",
+		sql: `
+			ALTER TABLE users ADD COLUMN age INTEGER;`,
+	},
+];
+
+// Handles the SQL migrations
+async function runMigrations(
+	storage: DurableObjectStorage,
+): Promise<{ rowsRead: number; rowsWritten: number }> {
+	const result = {
+		rowsRead: 0,
+		rowsWritten: 0,
+	};
+
+	// fetch the last migration version that was run
+	const currentVersion = (await storage.get<number>("migration")) ?? 0;
+
+	// filter out the migrations that have not been run
+	const pendingMigrations = migrations.filter((m) => m.id > currentVersion);
+
+	// no migrations to run
+	if (pendingMigrations.length === 0) {
+		return result;
+	}
+
+	try {
+		await storage.transaction(async () => {
+			for (let migration of pendingMigrations) {
+				console.log(
+					`Running migration ${migration.id}: ${migration.description}`,
+				);
+				const cursor = storage.sql.exec(migration.sql);
+				let _ = cursor.toArray();
+				result.rowsRead += cursor.rowsRead;
+				result.rowsWritten += cursor.rowsWritten;
+				// store the migration version that was run
+				await storage.put("migration", migration.id);
+			}
+		});
+		return result;
+	} catch (e) {
+		console.error(e);
+		throw new Error("Migration failed");
+	}
+}
+
+export class MigrationExampleDO extends DurableObject<Env> {
+	storage: DurableObjectStorage;
+
+	constructor(ctx: DurableObjectState, env: Env) {
+		super(ctx, env);
+		this.storage = ctx.storage;
+	}
+
+	// inserts a user in the user table
+	async insertUser(name: string) {
+		// run migrations before write
+		await runMigrations(this.storage);
+
+		return this.storage.sql.exec(
+			`INSERT INTO users (name) VALUES ('${name}');`,
+		);
+	}
+}
+
+export default {
+	/**
+	 * This is the standard fetch handler for a Cloudflare Worker
+	 *
+	 * @param request - The request submitted to the Worker from the client
+	 * @param env - The interface to reference bindings declared in wrangler.jsonc
+	 * @param ctx - The execution context of the Worker
+	 * @returns The response to be sent back to the client
+	 */
+	async fetch(request, env, ctx): Promise<Response> {
+		// We will create a `DurableObjectId` using the pathname from the Worker request
+		// This id refers to a unique instance of our 'MigrationExampleDO' class above
+		let id: DurableObjectId = env.MIGRATION_EXAMPLE_DO.idFromName(
+			new URL(request.url).pathname,
+		);
+
+		// This stub creates a communication channel with the Durable Object instance
+		// The Durable Object constructor will be invoked upon the first call for a given id
+		let stub = env.MIGRATION_EXAMPLE_DO.get(id);
+
+		// Inserts a user into the 'users' table
+		stub.insertUser("John");
+
+		return new Response("User inserted", { status: 200 });
+	},
+} satisfies ExportedHandler<Env>;
+```
+
+</TypeScriptExample>
+
+Finally, configure your Wrangler file to include a Durable Object [binding](/durable-objects/get-started/tutorial/#5-configure-durable-object-bindings) and [migration](/durable-objects/reference/durable-objects-migrations/) based on the namespace and class name chosen previously.
+
+<WranglerConfig>
+
+```toml title="wrangler.toml"
+name = "sql-migration-do"
+
+[[durable_objects.bindings]]
+name = "MIGRATION_EXAMPLE_DO"
+class_name = "MigrationExampleDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["MigrationExampleDO"]
+```
+
+</WranglerConfig>
+
+### Related resources
+
+- [SQL Storage](/durable-objects/api/sql-storage)
+- [Workers RPC](/workers/runtime-apis/rpc/)
+- [Zero-latency SQLite storage in every Durable Object](https://blog.cloudflare.com/sqlite-in-durable-objects/).
