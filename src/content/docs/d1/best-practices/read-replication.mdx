@@ -8,7 +8,7 @@ sidebar:
 
 import { GlossaryTooltip, Details, GitHubCode, APIRequest, Tabs, TabItem, TypeScriptExample } from "~/components"
 
-D1 read replication can lower latency for read queries and scale read throughput by adding read-only database copies, called read replicas, across global regions closer to clients.
+D1 read replication can lower latency for read queries and scale read throughput by adding read-only database copies, called read replicas, across regions globally closer to clients.
 
 Your application can use read replicas with D1 [Sessions API](/d1/worker-api/d1-database/#withsession). A Session encapsulates all the queries from one logical session for your application. For example, a Session may correspond to all queries coming from a particular web browser session. All queries within a Session read from a database instance which is as up-to-date as your query needs it to be. Sessions API ensures [sequential consistency](/d1/best-practices/read-replication/#replica-lag-and-consistency-model) for all queries in a Session.
 
@@ -369,7 +369,7 @@ async function getBillStatement(accountId: string, billId: string, bookmark: str
 
 ### Start a Session from previous context (bookmark)
 
-To create a new Session from the context of a previous Session, pass a `bookmark` parameter to guarantee that the Session starts with database state as of or later than the provided `bookmark`. `bookmark` could be saved in HTTP header from previous Session.
+To create a new Session from the context of a previous Session, pass a `bookmark` parameter to guarantee that the Session starts with a database version that is at least as up-to-date as the provided `bookmark`.
 
 ```ts
 const bookmark = request.headers.get('x-d1-bookmark') ?? 'first-unconstrained';
@@ -493,7 +493,6 @@ console.log({
 ```
 
 - `served_by_region` and `served_by_primary` fields are present for all D1 remote requests, regardless of whether read replication is enabled or if the Sessions API is used. On local development, `npx wrangler dev`, these fields are `undefined`.
-- You can also manually calculate the query latency using `Date.now()` before and after your query.
 
 ## Read replica locations
 
