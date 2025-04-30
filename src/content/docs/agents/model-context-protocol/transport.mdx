@@ -78,7 +78,7 @@ export default app
 ```
 </TabItem> </Tabs>
 
-#### MCP Server with Authentication 
+#### MCP server with authentication 
 If your MCP server implements authentication & authorization using the [Workers OAuth Provider](https://github.com/cloudflare/workers-oauth-provider) Library, then you can configure it to support both transport methods using the `apiHandlers` property.
 
 ```js
@@ -91,7 +91,7 @@ export default new OAuthProvider({
 })
 ```
 
-### Upgrading an Existing Remote MCP Server
+### Upgrading an existing remote MCP server
 If you've already built a remote MCP server using the Cloudflare Agents SDK, make the following changes to support the new Streamable HTTP transport while maintaining compatibility with remote MCP clients using SSE:
 - Use `MyMcpAgent.serveSSE('/sse')` for the existing SSE transport. Previously, this would have been `MyMcpAgent.mount('/sse')`, which has been kept as an alias.
 - Add a new path with `MyMcpAgent.serve('/mcp')` to support the new Streamable HTTP transport.
@@ -104,7 +104,7 @@ To use apiHandlers, update to @cloudflare/workers-oauth-provider v0.0.4 or later
 
 With these few changes, your MCP server will support both transport methods, making it compatible with both existing and new clients.
 
-### Testing with MCP Clients
+### Testing with MCP clients
 While most MCP clients haven't yet adopted the new Streamable HTTP transport, you can start testing it today using [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), an adapter that lets MCP clients that otherwise only support local connections work with remote MCP servers.
 
 Follow [this guide](/agents/guides/test-remote-mcp-server/) for instructions on how to connect to your remote MCP server from Claude Desktop, Cursor, Windsurf, and other local MCP clients, using the [`mcp-remote` local proxy](https://www.npmjs.com/package/mcp-remote).
