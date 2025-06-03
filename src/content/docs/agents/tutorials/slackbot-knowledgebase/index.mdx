@@ -22,7 +22,9 @@ import {
 
 In this tutorial, you will create an AI-powered Slackbot. The bot will answer user's questions, using the content embeded with [AutoRAG](/autorag). You will use the Agents SDK to create the agent.
 
-For each new thread, you will have a new instance of the agent. You will also store the messages of each thread in the state of the agent. This will allow you to maintain the conversation context.
+For each new thread, you will have a new instance of the agent. You will also store the messages of each thread in the state of the agent. This will allow you to maintain the conversation context. If a user asks a follow-up question, the agent will have access to the previous messages and can provide a more accurate response.
+
+Using the Agents SDK, you don't need to implement the state management logic. The SDK provide you with the necessary tools to manage the state seamlessly. You also don't need an external database to store the messages, as they are stored in the persistent storage of the agent.
 
 While this tutorial focuses on building a Slackbot, the same principles can be applied to any use-case that requires an AI-powered agent. You can even extend this tutorial to build agents for incident response, customer support, or any other use-case that requires an AI-powered agent.
 
@@ -50,7 +52,7 @@ Create a new Workers project by running the following command:
 	}}
 />
 
-You will need to install the [Cloudflare Agents SDK](), [AI SDK](), OpenAI provider for AI SDK, [zod](), the [Slack Web API package]().
+You will need to install the [Cloudflare Agents SDK](https://developers.cloudflare.com/agents/), [AI SDK](https://www.npmjs.com/package/ai), OpenAI provider for AI SDK, [zod](https://www.npmjs.com/package/zod), the [Slack Web API package](https://www.npmjs.com/package/@slack/web-api).
 
 <PackageManagers pkg="agents ai @ai-sdk/openai zod @slack/web-api" />
 
@@ -58,12 +60,14 @@ Your project is now set up. You can start building your agent!
 
 ## Step 2: Handle Slack events
 
-The worker will receive events from Slack. You will need to handle these events and process them accordingly. Slack sends two types of events:
+Based on the Slack events you subscribe to, the Worker will receive events from Slack. You will need to handle these events and process them accordingly. Slack sends two types of events:
 
 - `url_verification`: To verify the request is from Slack.
 - `event_callback`: Event callback for the events you subscribe to.
 
-You will need to handle both of the events. The `url_verification` event can be handled by our worker and doesn't need to be processed by the agent. The `event_callback` event will be processed by the agent.
+You will need to handle both of these events. The `url_verification` event can be handled by our Worker. This event is used to verify the request is from Slack and doesn't need AI capabilities to be processed by the agent. 
+
+The `event_callback` event will be processed by the agent. This event contains the actual events you subscribed to. It will provide the event data that will be used by the agent to generate responses.
 
 To handle the `url_verification` event, you will need to:
 
@@ -275,6 +279,12 @@ new_sqlite_classes = ["KnowledgeBaseAgent"]
 ```
 </WranglerConfig>
 
+You will also need to add the OpenAI API key to the `.dev.vars` file. You can get the API key from [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys).
+
+```text title=".dev.vars"
+OPENAI_API_KEY=sk-1234567890
+```
+
 You now have a Slackbot that can answer user's questions. To make sure it uses the knowledge base, you will need to add the knowledge base tool to the AI model.
 
 ## Step 4: Create the knowledge base tool
@@ -346,7 +356,7 @@ To create a Slack app, follow these steps:
 
 :::note
 
-You will need to add a URL in the `Request URL` field in the `Event Subscriptions` page. This URL will be used to receive events from Slack. You will add this URL after deploying the worker.
+You will need to add a URL in the `Request URL` field in the `Event Subscriptions` page. This URL will be used to receive events from Slack. You will add this URL after deploying the Worker.
 
 :::
 
@@ -356,19 +366,13 @@ You will need to add a URL in the `Request URL` field in the `Event Subscription
 SLACK_BOT_TOKEN=xoxb-1234567890-1234567890-1234567890
 ```
 
-You will also need to add the OpenAI API key to the `.dev.vars` file. You can get the API key from [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys).
+## Step 6: Deploy the Worker
 
-```text title=".dev.vars"
-OPENAI_API_KEY=sk-1234567890
-```
-
-## Step 6: Deploy the worker
-
-Your Slack app is now ready to receive events from Slack. You will need to deploy the agent to Cloudflare Workers. Slack will send events to the worker, and the worker will process the events and send responses to Slack.
+Your Slack app is now ready to receive events from Slack. You will need to deploy the agent to Cloudflare Workers. Slack will send events to the Worker, and the Worker will process the events and send responses to Slack.
 
 :::note
 
-Application running on `localhost` will not receive events from Slack. You will need to deploy the worker to Cloudflare Workers. Alternatively, you can use a reverse proxy to forward events from Slack to your application running on `localhost` using [Cloudflare Tunnels](/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/).
+Application running on `localhost` will not receive events from Slack. You will need to deploy the Worker to Cloudflare Workers. Alternatively, you can use a reverse proxy to forward events from Slack to your application running on `localhost` using [Cloudflare Tunnels](/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/).
 
 :::
 
@@ -378,7 +382,7 @@ To deploy, execut the following command:
 npm run deploy
 ```
 
-The output returns the URL of the deployed worker. Copy the URL and add it to the `Request URL` field in the `Event Subscriptions` page of your Slack app. Click on `Save Changes` to save the URL.
+The output returns the URL of the deployed Worker. Copy the URL and add it to the `Request URL` field in the `Event Subscriptions` page of your Slack app. Click on `Save Changes` to save the URL.
 
 Next, add the credentials for your deployed Worker. Run the following command to do so:
 
@@ -475,7 +479,7 @@ The above code does the following:
 5. Calls the LLM by passing the state as the messages for context
 6. Appends the assistant response to the state.
 
-Save and deploy the worker. The agent should now be able to maintain the conversation context.
+Save and deploy the Worker. The agent should now be able to maintain the conversation context.
 
 ## Summary
 
