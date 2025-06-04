@@ -75,8 +75,17 @@ To route `100.80.0.0/16` through WARP:
 
 To route your private network's CIDR block through WARP, refer to [Connect a private network](/cloudflare-one/connections/connect-networks/private-net/cloudflared/connect-cidr/#3-route-private-network-ips-through-warp).
 
-## 3. Create an egress policy
+## 3. (Optional) Configure network policies
 
-Create an egress policy that points traffic to Cloudflare Tunnel.
+You can bulid [Gateway network policies](/cloudflare-one/policies/gateway/network-policies/) to filter HTTPS traffic to your public hostname on port 443. For example, suppose that you want to block all WARP users from accessing `app.bank.com` except for a specific set of users or groups. Additionally, those authorized users should only access `app.bank.com` using your AWS egress IP. You can accomplish this using two policies: the first allows specific users to reach `app.bank.com`, and the second blocks all other port 443 traffic to `app.bank.com`.
 
-Traffic to the public hostname will now route to your private network before egressing to the Internet.
+1. Allow company employees
+	<Render file="gateway/policies/restrict-access-to-private-networks-allow" product="cloudflare-one" params={{ selector: "SNI", value: "app.bank.com" }} />
+
+2. Block everyone else on port 443
+
+	| Selector       | Operator | Value        | Action |
+	| -------------- | -------- | ------------ | ------ |
+	| SNI            | in       | `app.bank.com` | Block  |
+
+Gateway does not currently support hostname-based filtering for traffic on non-443 ports. To block traffic to `app.bank.com` on all ports, you will need to use the [Destination IP](/cloudflare-one/policies/gateway/network-policies/#destination-ip) selector and specify the public IP space of `app.bank.com`.
