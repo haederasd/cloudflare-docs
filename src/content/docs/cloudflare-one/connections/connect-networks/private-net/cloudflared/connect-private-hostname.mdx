@@ -7,7 +7,7 @@ sidebar:
     text: Beta
 ---
 
-import { Render, Details } from "~/components";
+import { Render, Details, GlossaryTooltip } from "~/components";
 
 `cloudflared` can route to HTTP and non-HTTP applications on your private network using their private hostname (for example, `wiki.internal.local`). Private hostname routes are especially useful when the application has an unknown or ephemeral IP, which often occurs when infrastructure is provisioned by a third-party cloud provider.
 
@@ -31,8 +31,7 @@ Figures 1 and 2 illustrate the flow of DNS and network traffic when a user conne
 2. Based on the configured resolver policies, Gateway determines that `wiki.internal.local` should be resolved by a custom DNS resolver.
 3. Gateway does a DNS lookup for `wiki.internal.local` through Cloudflare Tunnel, and the custom DNS resolver returns the origin IP (`10.0.0.5`).
 4. Rather than responding to the DNS query with the actual origin IP, Gateway responds with a random IP address from the following CGNAT range:
-	- **IPv4**: `100.80.0.0/16`
-	- **IPv6**: `2606:4700:0cf1:4000::/64`
+	<Render file="gateway/egress-selector-cgnat-ips" />
 
 	The selected CGNAT IP is called the initial resolved IP.
 5. Gateway's network engine stores the mapping between the private hostname (`wiki.internal.local`), initial resolved IP (`100.80.0.1`), and the actual IP (`10.0.0.5`).
@@ -103,7 +102,8 @@ Configure Gateway to resolve the private hostname using your internal DNS resolv
 
 In your [device profiles](/cloudflare-one/connections/connect-devices/warp/configure-warp/device-profiles/), [configure Split Tunnels](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/) so that the following IPs route through the WARP tunnel:
 
-- Initial resolved IP CGNAT range: `100.80.0.0/16`
+- <GlossaryTooltip term="initial resolved IP">Initial resolved IP</GlossaryTooltip> CGNAT range:
+	<Render file="gateway/egress-selector-cgnat-ips" />
 - Private network CIDR where the application is located (for example, `10.0.0.0/8`)
 - Internal DNS resolver IP
 

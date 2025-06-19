@@ -7,7 +7,7 @@ sidebar:
     text: Beta
 ---
 
-import { Render, Details } from "~/components";
+import { Render, Details, GlossaryTooltip } from "~/components";
 
 <Render file="gateway/egress-selector-warp-version" />
 
@@ -63,14 +63,15 @@ To route a public hostname through Cloudflare Tunnel:
 
 If your traffic is onboarded using WARP, ensure that traffic to the following IP addresses route through the WARP tunnel to Gateway:
 
-- Initial resolved IP CGNAT range: `100.80.0.0/16`
+- <GlossaryTooltip term="initial resolved IP">Initial resolved IP</GlossaryTooltip> CGNAT range:
+	<Render file="gateway/egress-selector-cgnat-ips" />
 - Private network CIDR block
 
 ### Route initial resolved IPs
 
-When users connect to a public hostname route, Gateway will assign an initial resolved IP from the `100.80.0.0/16` range to the DNS query. The initial resolved IP is required because Gateway's network engine operates at L3/L4 and can only see IPs (not hostnames) when processing the connection. If a packet's destination IP falls within the `100.80.0.0/16`, Gateway knows that the IP maps to a public hostname route and sends the traffic down the corresponding Cloudflare Tunnel.
+When users connect to a public hostname route, Gateway will assign an <GlossaryTooltip term="initial resolved IP">initial resolved IP</GlossaryTooltip> to the DNS query. The initial resolved IP is required because Gateway's network engine operates at L3/L4 and can only see IPs (not hostnames) when processing the connection. If a packet's destination IP falls within the initial resolved IP CGNAT range, Gateway knows that the IP maps to a public hostname route and sends the traffic down the corresponding Cloudflare Tunnel.
 
-To route `100.80.0.0/16` through WARP:
+To route initial resolved IPs through WARP:
 
 <Render file="gateway/egress-selector-split-tunnels" />
 

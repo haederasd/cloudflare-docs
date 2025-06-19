@@ -2,7 +2,7 @@
 {}
 
 ---
-import { Tabs, TabItem } from "~/components"
+import { Tabs, TabItem, Render } from "~/components"
 
 In your WARP [device profile](/cloudflare-one/connections/connect-devices/warp/configure-warp/device-profiles/), configure your [Split Tunnel](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/) depending on the mode:
 
@@ -20,6 +20,6 @@ In your WARP [device profile](/cloudflare-one/connections/connect-devices/warp/c
    </TabItem> <TabItem label="Include IPs and domains">
 
    1. Add the required [Zero Trust domains](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/#cloudflare-zero-trust-domains) or [IP addresses](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/#cloudflare-zero-trust-ip-addresses) to your Split Tunnel include list.
-   2. [Add a route](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/#add-a-route) to include the IP address `100.80.0.0/16`.
-
+   2. [Add routes](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/#add-a-route) to include the following IP addresses:
+	 	<Render file="gateway/egress-selector-cgnat-ips" />
    </TabItem> </Tabs>
