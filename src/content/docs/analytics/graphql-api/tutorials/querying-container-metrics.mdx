@@ -1,0 +1,91 @@
+---
+title: Querying Container Metrics with GraphQL
+pcx_content_type: example
+products:
+  - Containers
+---
+
+In this example, we are going to use the GraphQL Analytics API to query for Container Metrics over a specified time period. We can query up to one month of data for dates up to three months ago.
+
+In the following examples, be sure to replace `<CLOUDFLARE_ACCOUNT_TAG>` and `<API_TOKEN>`[^1] with your API credentials, and adjust the `datetimeStart`, and `datetimeEnd` variables as needed.
+The results returned will be in JSON (as requested), so piping the output to [`jq`](https://jqlang.org/) will make them easier to read.
+
+## Container Application Level Metrics
+
+This API call will request aggregate memory, CPU load, disk usage, and network bandwidth (egress and ingress) over a one hour period for all of the instances of a Container application.
+
+Set `applicationId` to the ID of the Container application you want to query by replacing `<CONTAINER_APPLICATION_ID>`. This can be copied from the top of the Container application page in your dashboard.
+
+```bash
+echo '{
+  "query": "query GetCloudchamberMetrics($accountTag: string!, $datetimeStart: Time, $datetimeEnd: Time, $applicationId: string) {
+    viewer {
+      accounts(filter: { accountTag: $accountTag }) {
+        cloudchamberMetricsAdaptiveGroups(
+          limit: 100
+          filter: {
+            applicationId: $applicationId
+            datetimeMinute_geq: $datetimeStart
+            datetimeMinute_leq: $datetimeEnd
+            procType: \"user\"
+          }
+        ) {
+          avg {
+            memory
+            cpuLoad
+            rxBandwidth
+            txBandwidth
+          }
+          max {
+            diskUsage
+          }
+          quantiles {
+            memoryP50
+            memoryP90
+            memoryP99
+            cpuLoadP50
+            cpuLoadP90
+            cpuLoadP99
+            diskUsageP50
+            diskUsageP90
+            diskUsageP99
+            rxBandwidthBpsP50
+            rxBandwidthBpsP90
+            rxBandwidthBpsP99
+            txBandwidthBpsP50
+            txBandwidthBpsP90
+            txBandwidthBpsP99
+          }
+          dimensions {
+            datetimeFiveMinutes
+            durableObjectId
+          }
+        }
+      }
+    }
+  }",
+  "variables": {
+    "accountTag": "<CLOUDFLARE_ACCOUNT_TAG>",
+    "datetimeStart": "2025-07-23T00:00:00.000Z",
+    "datetimeEnd": "2025-07-23T01:00:00.000Z",
+    "applicationId": "<CONTAINER_APPLICATION_ID>"
+  }
+}' | curl --silent \
+  https://api.cloudflare.com/client/v4/graphql \
+  --header "Authorization: Bearer <API_TOKEN>" \
+  --header "Accept: application/json" \
+  --header "Content-Type: application/json" \
+  --data @-
+```
+
+To get metrics for each specific instance of the Container application, you can add `'deploymentId'` to the `dimensions` field in the query:
+
+```bash
+dimensions {
+	datetimeFiveMinutes
+	deploymentId
+	durableObjectId
+}
+```
+
+[^1]: Refer to [Configure an Analytics API token](/analytics/graphql-api/getting-started/authentication/api-token-auth/) for more information on configuration and permissions.
