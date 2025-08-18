@@ -1,0 +1,79 @@
+name: Partials audit
+
+# **What it does**: Regularly audits our documentation for unused partials files.
+# **Why we have it**: Good hygiene + helps simplify future content audits.
+# **Who does it impact**: PCX team
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 1 * *"
+  pull_request:
+    branches:
+      - production
+
+jobs:
+  partials-audit:
+    permissions:
+      issues: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Find Unused Partials
+        id: find-partials
+        run: |
+          # Find all partials files
+          FILES=$(find src/content/partials -type f -name "*.mdx")
+
+          # Check if files are referenced in any markdown file via Render components
+          UNUSED_FILES=""
+          for FILE in $FILES; do
+            # Get the relative path from src/content/partials/
+            RELATIVE_PATH=${FILE#src/content/partials/}
+            # Get the filename without extension
+            FILENAME=$(basename "$RELATIVE_PATH" .mdx)
+            # Get the product directory (first part of the path)
+            PRODUCT_DIR=$(dirname "$RELATIVE_PATH")
+            
+            FOUND=false
+            
+            # Search for Render components that reference this file
+            # Look for files with explicit product parameter matching our product directory
+            if grep -q -r -E "<Render[^>]*file=\"$FILENAME\"[^>]*product=\"$PRODUCT_DIR\"" --include="*.mdx" .; then
+              FOUND=true
+            fi
+            
+            # Look for files with explicit product parameter matching our product directory (reverse order)
+            if grep -q -r -E "<Render[^>]*product=\"$PRODUCT_DIR\"[^>]*file=\"$FILENAME\"" --include="*.mdx" .; then
+              FOUND=true
+            fi
+            
+            # Look for files without product parameter in matching docs directory
+            if grep -l -r -E "<Render[^>]*file=\"$FILENAME\"" --include="*.mdx" src/content/docs/$PRODUCT_DIR/ 2>/dev/null | grep -v -E "product=" | head -1 >/dev/null 2>&1; then
+              FOUND=true
+            fi
+            
+            if [ "$FOUND" = false ]; then
+              UNUSED_FILES+="$FILE\n"
+            fi
+          done
+
+          # If there are unused files, output them
+          if [ -n "$UNUSED_FILES" ]; then
+            echo "unused_files=$UNUSED_FILES" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Issue if Unused Files Found
+        if: steps.find-partials.outputs.unused_files
+        env:
+          UNUSED_FILES: ${{ steps.find-partials.outputs.unused_files }}
+        run: |
+          # Create the issue and reference the unused_files variable
+          echo "The following files are not referenced in any markdown file:\n${UNUSED_FILES}" > unused_files.txt
+          curl --silent -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/cloudflare/cloudflare-docs/issues" \
+            -d "{\"title\": \"Unused Image Files Found\", \"body\": \"$(cat unused_files.txt)\", \"assignees\": [\"haleycode\"]}"
