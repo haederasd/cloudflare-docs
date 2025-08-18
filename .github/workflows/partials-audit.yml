@@ -31,6 +31,7 @@ jobs:
           # Check if files are referenced in any markdown file via Render components
           UNUSED_FILES=""
           for FILE in $FILES; do
+            echo "Processing file: $FILE"
             # Get the relative path from src/content/partials/
             RELATIVE_PATH=${FILE#src/content/partials/}
             echo "RELATIVE_PATH: $RELATIVE_PATH"
