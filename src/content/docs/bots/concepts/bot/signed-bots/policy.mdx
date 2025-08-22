@@ -1,0 +1,67 @@
+---
+pcx_content_type: reference
+title: Verified bots policy
+sidebar:
+    order: 3
+    label: Policy
+
+---
+
+
+In order to be listed by Cloudflare as a signed agent, your agent must conform to the below requirements. To provide the best possible protection to our customers, this policy may change in the future as we adapt to new bot behaviors.
+
+## Agent Policy
+
+### Minimum Traffic
+
+An agent must have a minimum amount of traffic for Cloudflare to be able to find it in the sampled data. The minimum traffic should have more than 1,000 requests per day across multiple domains.
+
+### Minimum Zones
+
+Service must be made for a widespread use of zones.
+
+#### Example
+
+A bot crawling one site is not valid.
+
+### Agent Identification
+
+The User-Agent field is optional as it is not required for Web Bot Authentication.
+
+However, if you choose to provide a User-Agent, it and the message signature must meet the following requirements:
+
+- Have at least 5 characters.
+- Must not contain special characters.
+- Must not include the same user-agent of another verified service.
+
+#### Example
+
+`cloudflare-browser-rendering` is a valid message signature.
+
+### Service Purpose
+
+The purpose of the service should be benign or helpful to both the owner of a zone and the users of the service. The service cannot perform any of the following:
+
+- Bot tooling
+- Scalpers
+- Credential-stuffing
+- Directory-traversal scanning
+- Excessive data scraping
+- DDoS botnets
+
+#### Example
+
+Mass price scraping direct e-commerce competitors is not a valid use case.
+
+### Public Documentation
+
+The agent must have a publicly documented purpose and expected behavior.
+
+## Breach of Policy
+
+If any of the requirements to validate are breached, a service will be removed from the global allowlist.
+
+#### Example breaches of policy
+
+- The service has vulnerabilities that have not been patched.
+- The disclosed purpose of the service does not reflect on the traffic.
