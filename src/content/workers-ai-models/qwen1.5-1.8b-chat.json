@@ -24,7 +24,7 @@
             "value": "https://huggingface.co/qwen/qwen1.5-1.8b-chat"
         },
         {
-            "property_id": "qwen/qwen1.5-1.8b-chat",
+            "property_id": "planned_deprecation_date",
             "value": "2025-10-01"
         }
     ],
