@@ -5,36 +5,197 @@ sidebar:
   order: 2
 ---
 
-import { GlossaryTooltip } from "~/components";
+import { APIRequest, Tabs, TabItem } from "~/components";
 
-Work with your account team to understand everything you need to ensure a smooth transition during the onboarding process.
+Work with your account team to make sure your contract covers everything you need to onboard your prefix. Cloudflare requires service-specific configurations, as well as some requirements common to all BYOIP customers.
 
-Cloudflare requires a service-specific configuration for your prefixes, as well as some requirements common to all BYOIP customers regardless of service type.
+Once your account configurations are in place, consider the sections below to learn how to set up your BYOIP prefixes.
 
-## Requirements
+## Before you begin
 
-The following requirements are common to all products compatible with BYOIP.
+* Verify that your [Internet Routing Registry (IRR)](/byoip/concepts/irr-entries/) records are up to date and contain:
 
-You must verify that your [Internet Routing Registry (IRR)](/byoip/concepts/irr-entries/) records are up to date and contain:
+    * `route` or `route6` objects matching the exact prefixes you want to onboard
+    * `origin` matching the correct ASN you want to onboard
 
-    - `route` or `route6` objects matching the exact prefixes you want to onboard
-    - `origin` matching the correct ASN you want to onboard
+    :::note
+    The process described on this page only supports using Cloudflare's ASN (AS13335). If you must announce the prefixes under your own ASN, contact your account team.
+    :::
 
-:::caution[RPKI validation]
-You are not required to use <GlossaryTooltip term="Resource Public Key Infrastructure (RPKI)">Resource Public Key Infrastructure (RPKI)</GlossaryTooltip>. However, if you do, make sure your <GlossaryTooltip term="Route Origin Authorization (ROA)">ROAs</GlossaryTooltip> are accurate. You can use [Cloudflare's RPKI Portal](https://rpki.cloudflare.com/?view=validator) and a second source such as [Routinator](https://rpki-validator.ripe.net/ui/) to double-check your prefixes.
+* You must use Resource Public Key Infrastructure (RPKI) validation and make sure your ROAs are accurate. You can use [Cloudflare's RPKI Portal](https://rpki.cloudflare.com/?view=validator) and a second source such as [Routinator](https://rpki-validator.ripe.net/ui/) to double-check your prefixes.
+
+* If you are not familiar with how Cloudflare API works, refer to [Fundamentals](/fundamentals/api/). Make sure you have the necessary permissions and that you have your account ID.
+
+## 1. Set up your prefixes
+
+1. Use the [Add Prefix endpoint](/api/resources/addressing/subresources/prefixes/methods/create/) to create a prefix in the Cloudflare account that should own the BYOIP prefix.
+
+(Add codeblock as example)
+
+```json title="Response" {11,12}
+
+ "result": {
+    "id": "72823e95d6c64d48a8111fec81179816",
+    "created_at": "2025-02-25T00:34:11.423722Z",
+    "modified_at": "2025-02-25T00:34:11.423722Z",
+    "cidr": "1.255.115.0/24",
+    "account_id": "654c5f71c324478cc9f68d60065d4620",
+    "description": "",
+    "approved": "P",
+    "on_demand_enabled": false,
+    "on_demand_locked": false,
+    "advertised": null,
+    "advertised_modified_at": null,
+    "loa_document_id": null,
+    "asn": 13335,
+    "irr_validation_state": "pending",
+    "rpki_validation_state": "pending"
+    "prefix_ownership_validation": {
+      "state" : "pending",
+      "token": "<>",
+      "delegate_loa_creation" : true
+      }
+  }
+
+```
+
+2. Validate prefix ownership using one of the following methods:
+
+<Tabs> <TabItem label="Modify IRR record">
+
+1. Copy the token returned by the API call.
+2. On the IRR record of the prefix you are onboarding, add the following string in either a `description` or `remarks` field. Replace `<TOKEN>` by the actual token you copied in the previous step.
+
+```
+cf-validation: <TOKEN>
+```
+
+   :::note
+
+   The exact steps to update your IRR record will depend on the registry you are using. Refer to [Internet Routing Registry (IRR)](/byoip/concepts/irr-entries/) for details.
+
+   :::
+
+</TabItem> <TabItem label="Reverse DNS zone and TXT record">
+
+
+1. Consider the size of the prefix you are bringing to Cloudflare. Since the standard `in-addr.arpa` tree assumes delegations on octet or nibble boundaries, if you onboard prefixes that are not aligned with those, you will have to split up the prefix into subnets and create the corresponding reverse DNS zones for each.
+
+		(Add calculation examples (collapsable))
+
+2. Set up a reverse DNS zone. If you use Cloudflare for DNS, refer to [Reverse DNS zones](/dns/additional-options/reverse-zones/#set-up-a-reverse-zone). If you use a different DNS provider, follow their instructions.
+3. Create TXT records using `cf-validation` as their `name`. They should look like the following example:
+
+
+```
+cf-validation.<REVERSE_ZONE_ADDRESS> IN TXT <TOKEN>
+```
+
+4. Update nameservers at your Regional Internet Registry (RIR).The exact steps to update your nameservers will depend on the registry you are using.
+
+Once the ownership validation is successful, and if the RPKI and IRR validations also pass, the `approved` field in your prefix will return "V". This means you can proceed to create IP address service bindings[^1].
+
+</TabItem> </Tabs>
+
+3. (Optional) Use the [Prefix Details endpoint](/api/resources/addressing/subresources/prefixes/methods/get/) to check if any issues were found during validation. If so, proceed with the necessary changes and make a request to restart validation.
+<APIRequest path= "/accounts/{account_id}/addressing/prefixes/{prefix_id}" method="GET" />
+
+   (Add response example (collapsable))
+
+(Add code block example)
+
+4. (Optional) You can allow other accounts to use part or all of your BYOIP prefix. Refer to [Prefix delegations](/byoip/concepts/prefix-delegations/) for details.
+
+<APIRequest
+path="/accounts/{account_id}/addressing/prefixes/{prefix_id}/delegations"
+method="POST"
+json={{
+	"cidr":"<IP_PREFIX_TO_DELEGATE>",
+	"delegated_account_id": "<ACCOUNT_ID>"
+	}}
+/>
+
+:::note
+Although you can delegate IPs to other accounts, the IP address service bindings are still created and managed on the parent account - meaning the Cloudflare account where you added the prefix in step 1.
 :::
 
-## Process overview
+## 2. Create a default service binding
 
-Overall, the steps can be summarized as follows:
+When you onboard your IP prefixes to Cloudflare, there must be one service binding that spans across your entire prefix. Traffic destined for a given IP address will be routed to this service by default, unless you create an override binding.
 
-1. You revise your [IRRs and ROAs](#requirements) (if applicable) to make sure they are correct.
-2. You prepare a [Letter of Agency (LOA)](/byoip/concepts/loa/) containing both the prefix you are authorizing Cloudflare to announce and which ASN they will be announced under. Cloudflare will present this to our transit partners as evidence that we are allowed to announce the route.
-3. You use the [Upload LOA Document](/api/resources/addressing/subresources/loa_documents/methods/create/) API endpoint to submit the letter under your account and the [Add Prefix](/api/resources/addressing/subresources/prefixes/methods/create/) endpoint to create the prefix in your account with the associated `loa_document_id`.
-4. After receiving the LOA, Cloudflare validates the [requirements](#requirements) and provisions the IPs.
-5. (Optional) You can use [prefix delegations](/byoip/concepts/prefix-delegations/) to share all or part of your prefix with another Cloudflare account.
-6. You use [service bindings](/byoip/service-bindings/)[^1] and [address maps](/byoip/address-maps/)[^2] to control how your IPs are used.
-7. You advertise or withdraw the BGP route for a prefix via the [BGP Prefixes API](/api/resources/addressing/subresources/prefixes/subresources/bgp_prefixes/).
+:::note
+Magic Transit can only be used as default binding, spanning across your entire prefix. You can then override the Magic Transit binding with CDN or Spectrum for smaller subnets but not the other way around. For details refer to [scope](/byoip/service-bindings/#scope).
+:::
+
+1. Make a `POST` request to the [Create service binding](/api/resources/addressing/subresources/prefixes/subresources/service_bindings/methods/create/) endpoint, indicating the entire BYOIP prefix that you are onboarding and the service that should be used for your default binding.
+
+<APIRequest
+path="/accounts/{account_id}/addressing/prefixes/{prefix_id}/bindings"
+method="POST"
+json={{
+"cidr": "<ENTIRE_BYOIP_PREFIX>",
+"service_id": "<DEFAULT_SERVICE>"
+}}
+/>
+
+A corresponding BGP prefix will be created automatically. Allow five hours before you advertise the prefix.
+
+:::note
+For Magic Transit customers, the BGP prefix will be created in a `locked` state. Work with your account team to make sure it is unlocked after additional checks have passed.
+:::
+
+### (Optional) Add override bindings
+
+If you want to selectively route traffic on a per-IP address basis to CDN or Spectrum, you can create additional service bindings that will override the default one.
+
+:::note
+The steps below only cover assigning specific IPs to additional services. For guidance that includes CDN or Spectrum setup steps, refer to [Service bindings](https://developers.cloudflare.com/byoip/service-bindings/).
+:::
+
+1. Plan for what IP(s) will get the additional binding. Cloudflare **strongly** recommends implementing service bindings through an **aggregated** CIDR block, as it is more efficient than adding discrete bindings for non-contiguous CIDR blocks.
+
+   (Add collapsable example similar to existing ones in the service bindings docs)
+
+2. Make a `POST` request to the [Create service binding](/api/resources/addressing/subresources/prefixes/subresources/service_bindings/methods/create/) endpoint, indicating the IP address you want to bind to the CDN or Spectrum. Specify the **corresponding network mask** as needed.
+
+<APIRequest path="/accounts/{account_id}/addressing/prefixes/{prefix_id}/bindings" method="POST"json={{ "cidr": "203.0.113.100/32", "service_id": "<SERVICE_ID>"}} code={{mark: [6, 7]}}/>
+
+In the response body, the initial provisioning state should be `provisioning`.
+
+
+```json output {9}
+
+   {
+     "errors": [],
+     "messages": [],
+     "success": true,
+     "result": {
+       "cidr": "203.0.113.100/32",
+       "id": "<SERVICE_BINDING_ID>",
+       "provisioning": {
+         "state": "provisioning"
+         },
+       "service_id": "<SERVICE_ID>",
+       "service_name": "<SERVICE_NAME>"
+     }
+   }
+```
+
+Once a service binding is created (or deleted), it will take **four to six hours** to propagate across Cloudflare's global network.
+
+## 3. Advertise the BGP prefix
+
+Once created, BGP prefixes are initially withdrawn. After all your configurations are in place - including address maps[^2] if you will use CDN service -, proceed to advertise the BGP route for your prefix.
+
+1. Use the [Update BGP prefix](/api/resources/addressing/subresources/prefixes/subresources/bgp_prefixes/methods/edit/) endpoint to start the advertisement.
+
+<APIRequest
+  path="/accounts/{account_id}/addressing/prefixes/{prefix_id}/bgp/prefixes/{bgp_prefix_id}"
+  method="PATCH"
+  json={{
+  "on_demand": {"advertised": true}
+  }}
+/>
 
 [^1]: Mappings that control through which pipeline traffic destined for a given IP address will be routed.
 [^2]: Mappings that specify which IP addresses should be used when Cloudflare responds to DNS queries for proxied hostnames.
