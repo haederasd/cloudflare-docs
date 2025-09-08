@@ -1,0 +1,32 @@
+---
+pcx_content_type: how-to
+title: Register WARP with minimal user interaction
+sidebar:
+  order: 4
+  label: Automated WARP registration
+---
+
+import { Render } from "~/components";
+
+Administrators can automate the WARP login process on managed devices and minimize the number of clicks required from an end user.
+
+End users typically need to complete several steps in their browser in order to login to WARP:
+
+1. Review and accept Cloudflare's privacy policy in the WARP client GUI.
+2. Select their identity provider from the Cloudflare Access login screen.
+3. Complete the authentication steps required by the identity provider.
+4. Interact with a browser popup requesting permission to launch the WARP client.
+
+This guide covers how to eliminate steps 1, 2 and 4 from your WARP deployment.
+
+:::note[Service token authentication]
+If you are looking to eliminate all user interaction, you can [enroll devices using service tokens](/cloudflare-one/connections/connect-devices/warp/deployment/device-enrollment/#check-for-service-token). Because users are not required to log in to an identity provider, identity-based policies and logging will not be available on these devices.
+:::
+
+## Turn off onboarding screen
+
+## Turn on Instant Auth
+
+If you plan to only allow access via a single IdP, turn on **Instant Auth** in your [device enrollment permissions](/cloudflare-one/connections/connect-devices/warp/deployment/device-enrollment/#set-device-enrollment-permissions). This allow users to skip the Cloudflare Access login page and go directly to your SSO login event.
+
+##
