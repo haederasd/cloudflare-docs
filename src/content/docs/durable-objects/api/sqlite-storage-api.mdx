@@ -10,7 +10,7 @@ import { Render, Type, MetaInfo, GlossaryTooltip, TypeScriptExample, Details } f
 :::note
 This page documents storage API for the newer SQLite-backed Durable Objects.
 
-For the legacy KV-backed Durable Object storage API, see [KV-backed Durable Object Storage (Legacy)](/durable-objects/api/legacy-kv-backed-storage/).
+For the legacy KV-backed Durable Object storage API, see [KV-backed Durable Object Storage (Legacy)](/durable-objects/api/legacy-kv-storage-api/).
 :::
 
 <Render file="api-storage-introduction" product="durable-objects" />
@@ -201,7 +201,7 @@ ctx.storage.onNextSessionRestoreBookmark(bookmark);
 
 ### `sql`
 
-`sql` is a readonly property of type `DurableObjectStorage` encapsulating the [SQL API](/durable-objects/api/sqlite-backed-storage/#sql-api).
+`sql` is a readonly property of type `DurableObjectStorage` encapsulating the [SQL API](/durable-objects/api/sqlite-storage-api/#synchronous-sql-api).
 
 ## Related resources
 
