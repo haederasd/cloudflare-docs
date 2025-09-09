@@ -6,7 +6,7 @@ sidebar:
   label: Setup
 ---
 
-import { APIRequest } from "~/components";
+import { DashButton, APIRequest, } from "~/components";
 
 [Web Application Firewall (WAF)](/waf/) allows you to create additional security measures through Cloudflare. As a SaaS provider, you can link custom rules, rate limiting rules, and managed rules to your custom hostnames. This provides more control to keep your domains safe from malicious traffic.
 
@@ -102,12 +102,12 @@ This assigns custom metadata to your custom hostname so that it has a security t
 
 To build rules through the dashboard:
 
-1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com) and navigate to your account and website.
+1. In the Cloudflare dashboard, go to **WAF**.
 
-2. Select **Security** > **WAF**.
+<DashButton url="/?to=/:account/application-security/waf" />
 
-3. Follow the instructions on the dashboard specific to custom rules, rate limiting rules, or managed rules, depending on your security goal.
+2. Follow the instructions on the dashboard specific to custom rules, rate limiting rules, or managed rules, depending on your security goal.
 
-4. Once the rule is active, you should see it under the applicable tab (custom rules, rate limiting, or managed rules).
+3. Once the rule is active, you should see it under the applicable tab (custom rules, rate limiting, or managed rules).
 
 ![Rule Active](~/assets/images/cloudflare-for-platforms/active-rule.png)
