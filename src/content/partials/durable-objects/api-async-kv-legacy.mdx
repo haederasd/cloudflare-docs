@@ -2,9 +2,9 @@
 {}
 ---
 
-import {Type, MetaInfo} from "~/components";
+import {Type, MetaInfo, AnchorHeading} from "~/components";
 
-### `get`
+<AnchorHeading title="get" slug="do-kv-async-get" depth={3} />
 
 - <code>ctx.storage.get(key <Type text="string" />, options <Type text="Object" />{" "}<MetaInfo text="optional" />)</code>: <Type text="Promise<any>" />
   - Retrieves the value associated with the given key. The type of the returned value will be whatever was previously written for the key, or undefined if the key does not exist.
@@ -20,7 +20,7 @@ import {Type, MetaInfo} from "~/components";
 - `noCache`: <Type text='boolean'/>
   - If true, then the key/value will not be inserted into the in-memory cache. If the key is already in the cache, the cached value will be returned, but its last-used time will not be updated. Use this when you expect this key will not be used again in the near future. This flag is only a hint. This flag will never change the semantics of your code, but it may affect performance.
 
-### `put`
+<AnchorHeading title="put" slug="do-kv-async-put" depth={3} />
 
 - <code>put(key <Type text="string" />, value <Type text="any" />, options <Type text="Object" /> <MetaInfo text="optional" />)</code>: <Type text="Promise" />
   - Stores the value and associates it with the given key. The value can be any type supported by the [structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm), which is true of most types.
@@ -36,7 +36,7 @@ import {Type, MetaInfo} from "~/components";
     - [SQLite-backed Durable Object limits](/durable-objects/platform/limits/#sqlite-backed-durable-objects-general-limits)
     - [KV-backed Durable Object limits](/durable-objects/platform/limits/#key-value-backed-durable-objects-general-limits)
 
-### `delete`
+<AnchorHeading title="delete" slug="do-kv-async-delete" depth={3} />
 
 - <code>delete(key <Type text="string" />, options <Type text="Object" /> <MetaInfo text="optional" />)</code>: <Type text="Promise<boolean>" />
   - Deletes the key and associated value. Returns `true` if the key existed or `false` if it did not.
@@ -74,7 +74,7 @@ If you invoke `put()` (or `delete()`) multiple times without performing any `awa
 The `put()` method returns a `Promise`, but most applications can discard this promise without using `await`. The `Promise` usually completes immediately, because `put()` writes to an in-memory write buffer that is flushed to disk asynchronously. However, if an application performs a large number of `put()` without waiting for any I/O, the write buffer could theoretically grow large enough to cause the isolate to exceed its 128 MB memory limit. To avoid this scenario, such applications should use `await` on the `Promise` returned by `put()`. The system will then apply backpressure onto the application, slowing it down so that the write buffer has time to flush. Using `await` will disable automatic write coalescing.
 :::
 
-### `list`
+<AnchorHeading title="list" slug="do-kv-async-list" depth={3} />
 
 - <code>list(options <Type text="Object" /> <MetaInfo text="optional" />)</code>: <Type text="Promise<Map<string, any>>" />
   - Returns all keys and values associated with the current Durable Object in ascending sorted order based on the keys' UTF-8 encodings.
@@ -104,7 +104,7 @@ The `put()` method returns a `Promise`, but most applications can discard this p
   - Maximum number of key-value pairs to return.
 
 - `allowConcurrency` <Type text ='boolean' />
-  - Same as the option to `get()`, above.
+  - Same as the option to [`get()`](#do-kv-async-get), above.
 
 - `noCache` <Type text ='boolean' />
-  - Same as the option to `get()`, above.
+  - Same as the option to [`get()`](#do-kv-async-get), above.
