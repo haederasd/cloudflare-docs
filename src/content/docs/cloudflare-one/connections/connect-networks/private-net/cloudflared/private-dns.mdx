@@ -26,7 +26,7 @@ To resolve private DNS queries:
 3. Route specific DNS queries to your internal DNS resolver using one of the following options:
 
 	- [Create a Local Domain Fallback entry](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/local-domains/) that points to the internal DNS resolver. For example, you can instruct the WARP client to resolve all requests for `myorg.privatecorp` through an internal resolver at `10.0.0.25` rather than attempting to resolve this publicly.
-	- Alternatively, [create a resolver policy](/cloudflare-one/policies/gateway/resolver-policies/#create-a-resolver-policy) that points to the internal DNS resolver. <Render file="gateway/resolver-policies-intro" />
+	- Alternatively, [create a resolver policy](/cloudflare-one/policies/gateway/resolver-policies/#create-a-resolver-policy) that points to the internal DNS resolver. <Render file="gateway/resolver-policies-intro" product="cloudflare-one"/>
 
 4. [Enable the Gateway proxy](/cloudflare-one/policies/gateway/proxy/#turn-on-the-gateway-proxy) for TCP and UDP.
 
