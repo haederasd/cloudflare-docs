@@ -1,7 +1,7 @@
 ---
 {}
-
 ---
+
 import { Tabs, TabItem, Render } from "~/components"
 
 In your WARP [device profile](/cloudflare-one/connections/connect-devices/warp/configure-warp/device-profiles/), configure [Split Tunnels](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/) depending on the mode:
@@ -21,5 +21,5 @@ In your WARP [device profile](/cloudflare-one/connections/connect-devices/warp/c
 
    1. Add the required [Zero Trust domains](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/#cloudflare-zero-trust-domains) or [IP addresses](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/#cloudflare-zero-trust-ip-addresses) to your Split Tunnel include list.
    2. [Add routes](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/#add-a-route) to include the following IP addresses:
-	 	<Render file="gateway/egress-selector-cgnat-ips" />
+	 	<Render file="gateway/egress-selector-cgnat-ips" product="cloudflare-one" />
    </TabItem> </Tabs>

@@ -9,11 +9,10 @@ sidebar:
 
 import { Render, Details, GlossaryTooltip } from "~/components";
 
-:::note[Availability]
-Hostname routes are currently available in closed beta to Enterprise customers. To request access, contact your account team.
-:::
-
-<Render file="gateway/egress-selector-warp-version" />
+<Render
+	file="gateway/egress-selector-warp-version"
+	product="cloudflare-one"
+/>
 
 Cloudflare Tunnel can be used for source IP anchoring when you want to use existing egress IPs instead of purchasing [Cloudflare dedicated egress IPs](/cloudflare-one/policies/gateway/egress-policies/dedicated-egress-ips/). Some third-party websites may have an Access Control List (ACL) that only allow connections from certain source IPs. If you already a non-Cloudflare IP on their allowlist (such an egress IP provided by an ISP or a cloud provider like AWS), you can configure `cloudflared` to anchor user traffic to the same IPs that you use today.
 
@@ -41,9 +40,12 @@ To learn more about how Gateway applies hostname-based egress policies, refer to
 
 ## Prerequisites
 
-- User traffic is on-ramped to Gateway using one of the following methods:
+User traffic is on-ramped to Gateway using one of the following methods:
 
-	<Render file="gateway/egress-selector-onramps" />
+<Render
+	file="gateway/egress-selector-onramps"
+	product="cloudflare-one"
+/>
 
 ## 1. Connect your private network
 
@@ -70,13 +72,15 @@ In your WARP [Split Tunnels](/cloudflare-one/connections/connect-devices/warp/co
 ### Initial resolved IPs
 
 When users connect to a public hostname route, Gateway will assign an <GlossaryTooltip term="initial resolved IP">initial resolved IP</GlossaryTooltip> to the DNS query from the following range:
-	<Render file="gateway/egress-selector-cgnat-ips" />
 
 The initial resolved IP is required because Gateway's network engine operates at L3/L4 and can only see IPs (not hostnames) when processing the connection. If a packet's destination IP falls within the initial resolved IP CGNAT range, Gateway knows that the IP maps to a public hostname route and sends the traffic down the corresponding Cloudflare Tunnel.
 
 To route initial resolved IPs through WARP:
 
-<Render file="gateway/egress-selector-split-tunnels" />
+<Render
+	file="gateway/egress-selector-split-tunnels"
+	product="cloudflare-one"
+/>
 
 ### Private network IPs
 

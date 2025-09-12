@@ -9,10 +9,6 @@ sidebar:
 
 import { Render, Details, GlossaryTooltip, Checkbox } from "~/components";
 
-:::note[Availability]
-Hostname routes are currently available in closed beta to Enterprise customers. To request access, contact your account team.
-:::
-
 `cloudflared` can route to HTTP and non-HTTP applications on your private network using their private hostname (for example, `wiki.internal.local`). Private hostname routes are especially useful when the application has an unknown or ephemeral IP, which often occurs when infrastructure is provisioned by a third-party cloud provider.
 
 ## How private hostname routing works
@@ -84,7 +80,7 @@ To connect to private hostnames, your devices must forward the following traffic
 
 Configuration steps vary depending on your [device on-ramp](/cloudflare-one/connections/connect-networks/private-net/cloudflared/connect-private-hostname/#device-connectivity):
 
-<Details header = "WARP clients">
+<Details header="WARP clients">
 1. In [Split Tunnels](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/), ensure that the IPs listed above route through the WARP tunnel. For example, if you are using the default Split Tunnels Exclude configuration and your application and DNS resolver have private IPs in the range `10.0.0.0/8`, delete `100.64.0.0/10` and `10.0.0.0/8` from the Split Tunnels list. We recommend adding back the IPs that are not explicitly used by your network — refer to our [Split Tunnels calculator](/cloudflare-one/connections/connect-networks/private-net/cloudflared/connect-cidr/#3-route-private-network-ips-through-warp) for details.
 2. In [Local Domain Fallback](/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/local-domains/), delete the top-level domain for your private hostname.
 3. In [Gateway resolver policies](/cloudflare-one/policies/gateway/resolver-policies/#create-a-resolver-policy), delete any existing entries that match your private hostname.
