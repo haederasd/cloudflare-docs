@@ -13,29 +13,29 @@ This guide covers how to enable secure remote access to private IP addresses usi
 
 To connect your infrastructure with Cloudflare Tunnel:
 
-<Render file="tunnel/connect-private-network" />
+<Render file="tunnel/connect-private-network" product="cloudflare-one" />
 
 2. In the **CIDR** tab for the tunnel, enter the IP/CIDR range that you wish to route through the tunnel (for example `10.0.0.0/8`).
 
 ## 2. Set up the client
 
-<Render file="tunnel/warp-to-tunnel-client" />
+<Render file="tunnel/warp-to-tunnel-client" product="cloudflare-one" />
 
 ## 3. Route private network IPs through WARP
 
-<Render file="tunnel/warp-to-tunnel-route-ips" params={{ one: "private network"}}/>
+<Render file="tunnel/warp-to-tunnel-route-ips" product="cloudflare-one" params={{ one: "private network"}}/>
 
 ## 4. (Recommended) Filter network traffic with Gateway
 
-<Render file="tunnel/filter-network-traffic" />
+<Render file="tunnel/filter-network-traffic" product="cloudflare-one" />
 
 ### Enable the Gateway proxy
 
-<Render file="tunnel/enable-gateway-proxy" />
+<Render file="tunnel/enable-gateway-proxy" product="cloudflare-one" />
 
 ### Zero Trust policies
 
-<Render file="tunnel/catch-all-policy" />
+<Render file="tunnel/catch-all-policy" product="cloudflare-one"/>
 
 If you have applications clearly defined by IPs or hostnames, we recommend [creating an Access application](/cloudflare-one/applications/non-http/self-hosted-private-app/) and managing user access alongside your SaaS and other web apps. Alternatively, if you prefer to secure a private network using a traditional firewall model, you can build Gateway network and DNS policies for IP ranges and domains.
 
