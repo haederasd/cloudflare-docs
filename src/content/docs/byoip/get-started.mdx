@@ -97,7 +97,7 @@ The exact steps to update your IRR record will depend on the registry you are us
 
 1. Consider the size of the prefix you are bringing to Cloudflare. Since the standard `in-addr.arpa` tree assumes delegations on octet or nibble boundaries, if you onboard prefixes that are not aligned with those, you will have to split up the prefix into subnets and create the corresponding reverse DNS zones for each.
 
-		(Add calculation examples (collapsable))
+		(WIP - Add calculation examples (collapsable))
 
 2. Set up a reverse DNS zone. If you use Cloudflare for DNS, refer to [Reverse DNS zones](/dns/additional-options/reverse-zones/#set-up-a-reverse-zone). If you use a different DNS provider, follow their instructions.
 3. Create TXT records using `cf-validation` as their `name`. They should look like the following example:
@@ -117,9 +117,9 @@ Once the ownership validation is successful, and if the RPKI and IRR validations
 3. (Optional) Use the [Prefix Details endpoint](/api/resources/addressing/subresources/prefixes/methods/get/) to check if any issues were found during validation. If so, proceed with the necessary changes and make a request to restart validation.
 <APIRequest path= "/accounts/{account_id}/addressing/prefixes/{prefix_id}" method="GET" />
 
-   (Add response example (collapsable))
+   (WIP - Add response example (collapsable))
 
-(Add code block example)
+(WIP - Add code block example)
 
 4. (Optional) You can allow other accounts to use part or all of your BYOIP prefix. Refer to [Prefix delegations](/byoip/concepts/prefix-delegations/) for details.
 
@@ -171,7 +171,7 @@ The steps below only cover assigning specific IPs to additional services. For gu
 
 1. Plan for what IP(s) will get the additional binding. Cloudflare **strongly** recommends implementing service bindings through an **aggregated** CIDR block, as it is more efficient than adding discrete bindings for non-contiguous CIDR blocks.
 
-   (Add collapsable example similar to existing ones in the service bindings docs)
+   (WIP - Add collapsable example similar to existing ones in the service bindings docs)
 
 2. Make a `POST` request to the [Create service binding](/api/resources/addressing/subresources/prefixes/subresources/service_bindings/methods/create/) endpoint, indicating the IP address you want to bind to the CDN or Spectrum. Specify the **corresponding network mask** as needed.
 
