@@ -50,7 +50,7 @@ By default, Internet Explorer will be installed and configured in [Enhanced Secu
 
 ## 3. Connect the server to Cloudflare
 
-<Render file="tunnel/connect-private-network" />
+<Render file="tunnel/connect-private-network" product="cloudflare-one" />
 
 2. In the **CIDR** tab for the tunnel, enter the private IP or CIDR address of your server. In GCP, the server IP is the  **Internal IP** of the VM instance.
 
@@ -58,11 +58,15 @@ By default, Internet Explorer will be installed and configured in [Enhanced Secu
 
 ## 4. Set up the client
 
-<Render file="tunnel/warp-to-tunnel-client" />
+<Render file="tunnel/warp-to-tunnel-client" product="cloudflare-one" />
 
 ## 5. Route private network IPs through WARP
 
-<Render file="tunnel/warp-to-tunnel-route-ips" params={{ one: "private network"}} />
+<Render
+	file="tunnel/warp-to-tunnel-route-ips"
+	product="cloudflare-one"
+	params={{ one: "private network" }}
+/>
 
 ## 6. Connect as a user
 
