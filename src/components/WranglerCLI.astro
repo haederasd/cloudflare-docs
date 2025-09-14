@@ -1,0 +1,74 @@
+---
+import { z } from "astro:schema";
+import { PackageManagers } from "starlight-package-managers";
+import { getCommand } from "~/util/wrangler";
+
+function validateArg(value: any, expected: string): boolean {
+	if (Array.isArray(expected)) {
+		for (const choice of expected) {
+			if (value === choice) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return typeof value === expected;
+}
+
+type Props = z.input<typeof props>;
+
+const props = z.object({
+	command: z.string(),
+	positionals: z.array(z.string()).optional(),
+	flags: z.record(z.string(), z.any()).optional(),
+});
+
+const { command, positionals, flags } = props.parse(Astro.props);
+
+const definition = getCommand(command);
+
+let args = [];
+
+if (flags) {
+	for (const [key, value] of Object.entries(flags)) {
+		const flagDef = definition.args?.[key];
+
+		if (!flagDef) {
+			throw new Error(
+				`[WranglerCLI] Received "${key}" for "${command}" but no such arg exists`,
+			);
+		}
+
+		const type = flagDef.type ?? flagDef.choices;
+		const valid = validateArg(value, type);
+
+		if (!valid) {
+			throw new Error(
+				`[WranglerCLI] Expected "${type}" for "${key}" but got "${typeof value}"`,
+			);
+		}
+
+		args.push(...[`--${key}`, value]);
+	}
+}
+
+if (positionals) {
+	const positionalsDef = definition.positionalArgs ?? [];
+
+	if (positionalsDef.length === 0) {
+		throw new Error(
+			`[WranglerCLI] Expected 0 positional arguments for "${command}" but received ${positionals.length}`,
+		);
+	}
+
+	args.push(...positionals);
+}
+---
+
+<PackageManagers
+	pkg="wrangler"
+	type="exec"
+	args={`${command} ${args.join(" ")}`}
+/>
