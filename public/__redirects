@@ -820,6 +820,7 @@
 /gateway/getting-started-new/onboarding-gateway/ /cloudflare-one/policies/gateway/ 301
 /gateway/locations/setup-instructions/android/ /cloudflare-one/connections/connect-devices/agentless/dns/locations/ 301
 /gateway/locations/setup-instructions/router/ /cloudflare-one/policies/gateway/dns-policies/ 301
+/cloudflare-one/policies/gateway/managed-service-providers/ /cloudflare-one/policies/gateway/tiered-policies/managed-service-providers/ 301
 
 # google tag
 /google-tag-first-party-mode/ /google-tag-gateway/ 301
